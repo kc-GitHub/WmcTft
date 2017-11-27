@@ -56,7 +56,7 @@ public:
         Z21Slave::locInfo* locInfoRcvPtr, Z21Slave::locInfo* locInfoActPtr, uint8_t* assignedFunctions, bool updateAll);
 
     /**
-     * Show |/-\ while connecting to Wifi.
+     * Show | or - while connecting to Wifi.
      */
     void WifiConnectUpdate(uint8_t count);
 
@@ -64,6 +64,11 @@ public:
      * Error message when connecting to Wifi failed.
      */
     void WifiConnectFailed();
+
+    /**
+     * Error message when connecting to Z21 control unit failed.
+     */
+    void UdpConnectFailed();
 
     /**
      * Display menu.

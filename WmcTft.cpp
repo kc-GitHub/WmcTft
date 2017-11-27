@@ -20,7 +20,7 @@ const unsigned char locBitmapFw[] = { 0xff, 0xff, 0xff, 0xf0, 0xff, 0xff, 0xff, 
     0xff, 0xf0 };
 
 /**
- * BAckward direction loc symbol.
+ * Backward direction loc symbol.
  */
 const unsigned char locBitmapBw[] = { 0xff, 0xff, 0xff, 0xf0, 0xff, 0xff, 0xff, 0xf0, 0xff, 0xff, 0xff, 0xf0, 0xff,
     0xff, 0x81, 0xf0, 0xff, 0xf8, 0x0, 0x10, 0xff, 0xf8, 0x0, 0x10, 0xf0, 0xf8, 0x7e, 0x10, 0xe0, 0xfc, 0x7e, 0x30,
@@ -159,6 +159,7 @@ void WmcTft::UpdateLocInfo(
         }
     }
 
+    /* Update speed. */
     if ((updateAll == true) || (locInfoRcvPtr->Speed != locInfoActPtr->Speed))
     {
         /* Show Speed. */
@@ -169,6 +170,7 @@ void WmcTft::UpdateLocInfo(
         tft.println(locInfoRcvPtr->Speed);
     }
 
+    /* Show light symbol (or not) depending on light status. */
     if ((updateAll == true) || (locInfoRcvPtr->Light != locInfoActPtr->Light))
     {
         if (locInfoRcvPtr->Light == Z21Slave::locLightOn)
@@ -250,6 +252,21 @@ void WmcTft::WifiConnectFailed()
     tft.setTextColor(ST7735_RED);
     tft.setTextSize(2);
     tft.println("WIFI");
+    tft.setCursor(21, 60);
+    tft.println("CONNECT");
+    tft.setCursor(26, 80);
+    tft.println("FAILED");
+}
+
+/***********************************************************************************************************************
+ */
+void WmcTft::UdpConnectFailed()
+{
+    Clear();
+    tft.setCursor(17, 40);
+    tft.setTextColor(ST7735_RED);
+    tft.setTextSize(2);
+    tft.println("Z21 CONTROL");
     tft.setCursor(21, 60);
     tft.println("CONNECT");
     tft.setCursor(26, 80);
