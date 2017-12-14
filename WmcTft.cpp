@@ -263,13 +263,13 @@ void WmcTft::WifiConnectFailed()
 void WmcTft::UdpConnectFailed()
 {
     Clear();
-    tft.setCursor(17, 40);
+    tft.setCursor(1, 40);
     tft.setTextColor(ST7735_RED);
     tft.setTextSize(2);
     tft.println("Z21 CONTROL");
-    tft.setCursor(21, 60);
+    tft.setCursor(24, 60);
     tft.println("CONNECT");
-    tft.setCursor(26, 80);
+    tft.setCursor(29, 80);
     tft.println("FAILED");
 }
 
