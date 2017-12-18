@@ -76,6 +76,21 @@ public:
     void ShowMenu();
 
     /**
+     * Show initial turnout screen.
+     */
+    void ShowTurnoutScreen();
+
+    /**
+     * Show turnout address
+     */
+    void ShowTurnoutAddress(uint16_t address);
+
+    /**
+     * Show turnout direction
+     */
+    void ShowTurnoutDirection(uint8_t direction);
+
+    /**
      * Show loc address.
      */
     void ShowlocAddress(uint16_t address, color textColor);
