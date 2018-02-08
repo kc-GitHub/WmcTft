@@ -161,15 +161,30 @@ void WmcTft::UpdateLocInfo(
     uint8_t Index    = 0;
     uint8_t Function = 0;
 
-    if ((updateAll == true) || (locInfoRcvPtr->Direction != locInfoActPtr->Direction))
+    if ((updateAll == true) || (locInfoRcvPtr->Direction != locInfoActPtr->Direction)
+        || (locInfoRcvPtr->Occupied != locInfoActPtr->Occupied))
     {
         if (locInfoRcvPtr->Direction == Z21Slave::locDirectionForward)
         {
-            ShowLocSymbolFw();
+            if (locInfoRcvPtr->Occupied == false)
+            {
+                ShowLocSymbolFw(color_white);
+            }
+            else
+            {
+                ShowLocSymbolFw(color_yellow);
+            }
         }
         else
         {
-            ShowLocSymbolBw();
+            if (locInfoRcvPtr->Occupied == false)
+            {
+                ShowLocSymbolBw(color_white);
+            }
+            else
+            {
+                ShowLocSymbolBw(color_yellow);
+            }
         }
     }
 
@@ -323,7 +338,6 @@ void WmcTft::ShowMenu()
  */
 void WmcTft::ShowTurnoutScreen()
 {
-    Clear();
     UpdateStatus("TURNOUT", true, WmcTft::color_green);
 
     tft.drawBitmap(85, 20, TurnoutBitmap, 28, 28, ST7735_BLACK, ST7735_WHITE);
@@ -401,11 +415,29 @@ void WmcTft::FunctionAddSet()
 
 /***********************************************************************************************************************
  */
-void WmcTft::ShowLocSymbolFw() { tft.drawBitmap(85, 20, locBitmapFw, 28, 28, ST7735_BLACK, ST7735_WHITE); }
+void WmcTft::ShowLocSymbolFw(color locSymbolColor)
+{
+    switch (locSymbolColor)
+    {
+    case color_red: tft.drawBitmap(85, 20, locBitmapFw, 28, 28, ST7735_BLACK, ST7735_RED); break;
+    case color_green: tft.drawBitmap(85, 20, locBitmapFw, 28, 28, ST7735_BLACK, ST7735_GREEN); break;
+    case color_white: tft.drawBitmap(85, 20, locBitmapFw, 28, 28, ST7735_BLACK, ST7735_WHITE); break;
+    case color_yellow: tft.drawBitmap(85, 20, locBitmapFw, 28, 28, ST7735_BLACK, ST7735_YELLOW); break;
+    }
+}
 
 /***********************************************************************************************************************
  */
-void WmcTft::ShowLocSymbolBw() { tft.drawBitmap(85, 20, locBitmapBw, 28, 28, ST7735_BLACK, ST7735_WHITE); }
+void WmcTft::ShowLocSymbolBw(color locSymbolColor)
+{
+    switch (locSymbolColor)
+    {
+    case color_red: tft.drawBitmap(85, 20, locBitmapBw, 28, 28, ST7735_BLACK, ST7735_RED); break;
+    case color_green: tft.drawBitmap(85, 20, locBitmapBw, 28, 28, ST7735_BLACK, ST7735_GREEN); break;
+    case color_white: tft.drawBitmap(85, 20, locBitmapBw, 28, 28, ST7735_BLACK, ST7735_WHITE); break;
+    case color_yellow: tft.drawBitmap(85, 20, locBitmapBw, 28, 28, ST7735_BLACK, ST7735_YELLOW); break;
+    }
+}
 
 /***********************************************************************************************************************
  */

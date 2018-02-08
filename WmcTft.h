@@ -32,7 +32,8 @@ public:
     {
         color_red,
         color_green,
-        color_yellow
+        color_white,
+        color_yellow,
     };
 
     /* Constructor */
@@ -123,12 +124,12 @@ public:
     /**
      * Loc symbol forward.
      */
-    void ShowLocSymbolFw();
+    void ShowLocSymbolFw(color locSymbolColor);
 
     /**
      * Loc symbol backward.
      */
-    void ShowLocSymbolBw();
+    void ShowLocSymbolBw(color locSymbolColor);
 
     /**
      * Update the function info in lower part of screen.
