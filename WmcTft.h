@@ -136,6 +136,11 @@ public:
      */
     void UpdateFunction(uint8_t Index, uint8_t Function);
 
+    /**
+     * Show command line screen.
+     */
+    void CommandLine(void);
+
 private:
     /**
      * Convert color enum to display value.

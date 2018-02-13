@@ -488,6 +488,20 @@ void WmcTft::UpdateFunction(uint8_t Index, uint8_t Function)
 
 /***********************************************************************************************************************
  */
+void WmcTft::CommandLine(void)
+{
+    tft.setCursor(24, 40);
+    tft.setTextColor(ST7735_GREEN);
+    tft.setTextSize(2);
+    tft.println(" PRESS");
+    tft.setCursor(24, 60);
+    tft.println(" RESET");
+    tft.setCursor(22, 80);
+    tft.println("TO EXIT");
+}
+
+/***********************************************************************************************************************
+ */
 uint16_t WmcTft::getColor(color Clr)
 {
     uint16_t ColorReturn;
