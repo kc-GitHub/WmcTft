@@ -55,6 +55,11 @@ public:
     void UpdateStatus(const char* StrPtr, bool clearRowFull, color textColor);
 
     /**
+     * Show the name is the network connecting to...
+     */
+    void ShowNetworkName(const char* StrPtr);
+
+    /**
      * Update the actual selected and total number of locs right upper in the
      * screen.
      */

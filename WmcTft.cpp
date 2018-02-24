@@ -140,6 +140,23 @@ void WmcTft::UpdateStatus(const char* StrPtr, bool clearRowFull, color textColor
 
 /***********************************************************************************************************************
  */
+void WmcTft::ShowNetworkName(const char* StrPtr)
+{
+    uint16_t Length;
+
+    Length = strlen(StrPtr);
+    Length *= 6;
+
+    /* "Center" the text under the status row. */
+    tft.setCursor(56 - (Length / 2), 14);
+    tft.print("(");
+    tft.setTextSize(1);
+    tft.print(StrPtr);
+    tft.print(")");
+}
+
+/***********************************************************************************************************************
+ */
 void WmcTft::UpdateSelectedAndNumberOfLocs(uint8_t actualLocIndex, uint8_t NumberOfLocs)
 {
     tft.fillRect(88, 0, 128, 14, 0);
