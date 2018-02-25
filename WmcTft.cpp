@@ -157,7 +157,8 @@ void WmcTft::ShowNetworkName(const char* StrPtr)
 
 /***********************************************************************************************************************
  */
-void WmcTft::ClearNetworkName(void) { tft.fillRect(0, 14, 128, 28, 0); }
+void WmcTft::ClearNetworkName(void) { tft.fillRect(0, 14, 128, 26, 0); }
+
 /***********************************************************************************************************************
  */
 void WmcTft::UpdateSelectedAndNumberOfLocs(uint8_t actualLocIndex, uint8_t NumberOfLocs)
