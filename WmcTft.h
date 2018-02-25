@@ -60,6 +60,11 @@ public:
     void ShowNetworkName(const char* StrPtr);
 
     /**
+     * Clear the network name on the screen.
+     */
+    void ClearNetworkName(void);
+
+    /**
      * Update the actual selected and total number of locs right upper in the
      * screen.
      */
