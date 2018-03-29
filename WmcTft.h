@@ -77,9 +77,9 @@ public:
         Z21Slave::locInfo* locInfoRcvPtr, Z21Slave::locInfo* locInfoActPtr, uint8_t* assignedFunctions, bool updateAll);
 
     /**
-     * Show | or - while connecting to Wifi.
+     * Show | or - as indicating waiting on something.
      */
-    void WifiConnectUpdate(uint8_t count);
+    void UpdateRunningWheel(uint8_t count);
 
     /**
      * Error message when connecting to Wifi failed.
@@ -150,6 +150,21 @@ public:
      * Show command line screen.
      */
     void CommandLine(void);
+
+    /**
+     * Show cv number.
+     */
+    void ShowDccNumber(uint16_t CvNUmber, bool Update);
+
+    /**
+     * Show cv number.
+     */
+    void ShowDccValue(uint16_t CvValue, bool Init);
+
+    /**
+     * Delete showing cv number.
+     */
+    void ShowDccValueRemove(void);
 
 private:
     /**

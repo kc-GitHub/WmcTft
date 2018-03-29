@@ -295,7 +295,7 @@ void WmcTft::UpdateLocInfo(
 
 /***********************************************************************************************************************
  */
-void WmcTft::WifiConnectUpdate(uint8_t count)
+void WmcTft::UpdateRunningWheel(uint8_t count)
 {
     tft.fillRect(120, 0, 128, 14, 0);
     tft.setCursor(120, 5);
@@ -352,7 +352,8 @@ void WmcTft::ShowMenu()
     tft.println("1 ADD");
     tft.println("2 CHANGE");
     tft.println("3 DELETE");
-    tft.println("4 EXIT");
+    tft.println("4 CV PROG");
+    tft.println("5 POM PROG");
 }
 
 /***********************************************************************************************************************
@@ -536,3 +537,45 @@ uint16_t WmcTft::getColor(color Clr)
 
     return (ColorReturn);
 }
+
+/***********************************************************************************************************************
+ */
+void WmcTft::ShowDccNumber(uint16_t CvNUmber, bool Init)
+{
+    if (Init == true)
+    {
+        tft.setCursor(5, 26);
+        tft.setTextColor(ST7735_YELLOW);
+        tft.setTextSize(1);
+        tft.print("Cv number");
+    }
+
+    tft.fillRect(65, 33, 65, 30, ST7735_BLACK);
+    tft.setCursor(65, 33);
+    tft.setTextColor(ST7735_GREEN);
+    tft.setTextSize(3);
+    tft.print(CvNUmber);
+}
+
+/***********************************************************************************************************************
+ */
+void WmcTft::ShowDccValue(uint16_t CvValue, bool Init)
+{
+    if (Init == true)
+    {
+        tft.setCursor(5, 57);
+        tft.setTextColor(ST7735_YELLOW);
+        tft.setTextSize(1);
+        tft.print("CV value");
+    }
+
+    tft.fillRect(65, 64, 65, 30, ST7735_BLACK);
+    tft.setCursor(65, 64);
+    tft.setTextColor(ST7735_GREEN);
+    tft.setTextSize(3);
+    tft.print(CvValue);
+}
+
+/***********************************************************************************************************************
+ */
+void WmcTft::ShowDccValueRemove(void) { tft.fillRect(5, 57, 122, 38, ST7735_BLACK); }
