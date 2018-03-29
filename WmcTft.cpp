@@ -353,7 +353,6 @@ void WmcTft::ShowMenu()
     tft.println("2 CHANGE");
     tft.println("3 DELETE");
     tft.println("4 CV PROG");
-    tft.println("5 POM PROG");
 }
 
 /***********************************************************************************************************************
