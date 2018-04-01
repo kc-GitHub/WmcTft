@@ -152,19 +152,29 @@ public:
     void CommandLine(void);
 
     /**
-     * Show cv number.
+     * Show address of loc for POM mode.
      */
-    void ShowDccNumber(uint16_t CvNUmber, bool Update);
+    void ShowPomAddress(uint16_t Address, bool Init);
 
     /**
      * Show cv number.
      */
-    void ShowDccValue(uint16_t CvValue, bool Init);
+    void ShowDccNumber(uint16_t CvNUmber, bool Update, bool PomActive);
+
+    /**
+     * Show cv number.
+     */
+    void ShowDccValue(uint16_t CvValue, bool Init, bool PomActive);
 
     /**
      * Delete showing cv number.
      */
-    void ShowDccValueRemove(void);
+    void ShowDccValueRemove(bool PomActive);
+
+    /**
+     * Delete showing CV value.
+     */
+    void ShowDccNumberRemove(bool PomActive);
 
 private:
     /**

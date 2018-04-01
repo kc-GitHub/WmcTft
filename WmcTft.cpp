@@ -353,6 +353,7 @@ void WmcTft::ShowMenu()
     tft.println("2 CHANGE");
     tft.println("3 DELETE");
     tft.println("4 CV PROG");
+    tft.println("5 POM PROG");
 }
 
 /***********************************************************************************************************************
@@ -539,18 +540,53 @@ uint16_t WmcTft::getColor(color Clr)
 
 /***********************************************************************************************************************
  */
-void WmcTft::ShowDccNumber(uint16_t CvNUmber, bool Init)
+void WmcTft::ShowPomAddress(uint16_t Address, bool Init)
 {
     if (Init == true)
     {
-        tft.setCursor(5, 26);
+        tft.setCursor(5, 20);
+        tft.setTextColor(ST7735_YELLOW);
+        tft.setTextSize(1);
+        tft.print("POM address");
+    }
+
+    tft.fillRect(60, 30, 68, 30, ST7735_BLACK);
+    tft.setCursor(60, 30);
+    tft.setTextColor(ST7735_GREEN);
+    tft.setTextSize(3);
+    tft.print(Address);
+}
+
+/***********************************************************************************************************************
+ */
+void WmcTft::ShowDccNumber(uint16_t CvNUmber, bool Init, bool PomActive)
+{
+    if (Init == true)
+    {
+        if (PomActive == false)
+        {
+            tft.setCursor(5, 20);
+        }
+        else
+        {
+            tft.setCursor(5, 55);
+        }
         tft.setTextColor(ST7735_YELLOW);
         tft.setTextSize(1);
         tft.print("Cv number");
     }
 
-    tft.fillRect(65, 33, 65, 30, ST7735_BLACK);
-    tft.setCursor(65, 33);
+    if (PomActive == false)
+    {
+        tft.fillRect(60, 30, 68, 30, ST7735_BLACK);
+        tft.setCursor(60, 33);
+    }
+    else
+    {
+        tft.fillRect(60, 65, 65, 30, ST7735_BLACK);
+        tft.setCursor(60, 65);
+    }
+
     tft.setTextColor(ST7735_GREEN);
     tft.setTextSize(3);
     tft.print(CvNUmber);
@@ -558,18 +594,33 @@ void WmcTft::ShowDccNumber(uint16_t CvNUmber, bool Init)
 
 /***********************************************************************************************************************
  */
-void WmcTft::ShowDccValue(uint16_t CvValue, bool Init)
+void WmcTft::ShowDccValue(uint16_t CvValue, bool Init, bool PomActive)
 {
     if (Init == true)
     {
-        tft.setCursor(5, 57);
+        if (PomActive == false)
+        {
+            tft.setCursor(5, 55);
+        }
+        else
+        {
+            tft.setCursor(5, 90);
+        }
         tft.setTextColor(ST7735_YELLOW);
         tft.setTextSize(1);
         tft.print("CV value");
     }
 
-    tft.fillRect(65, 64, 65, 30, ST7735_BLACK);
-    tft.setCursor(65, 64);
+    if (PomActive == false)
+    {
+        tft.fillRect(60, 65, 65, 30, ST7735_BLACK);
+        tft.setCursor(60, 65);
+    }
+    else
+    {
+        tft.fillRect(60, 100, 100, 30, ST7735_BLACK);
+        tft.setCursor(60, 100);
+    }
     tft.setTextColor(ST7735_GREEN);
     tft.setTextSize(3);
     tft.print(CvValue);
@@ -577,4 +628,27 @@ void WmcTft::ShowDccValue(uint16_t CvValue, bool Init)
 
 /***********************************************************************************************************************
  */
-void WmcTft::ShowDccValueRemove(void) { tft.fillRect(5, 57, 122, 38, ST7735_BLACK); }
+void WmcTft::ShowDccValueRemove(bool PomActive)
+{
+    if (PomActive == false)
+    {
+        tft.fillRect(5, 55, 122, 38, ST7735_BLACK);
+    }
+    else
+    {
+        tft.fillRect(5, 90, 122, 38, ST7735_BLACK);
+    }
+}
+/***********************************************************************************************************************
+ */
+void WmcTft::ShowDccNumberRemove(bool PomActive)
+{
+    if (PomActive == false)
+    {
+        tft.fillRect(5, 20, 122, 38, ST7735_BLACK);
+    }
+    else
+    {
+        tft.fillRect(5, 55, 122, 38, ST7735_BLACK);
+    }
+}
