@@ -11,8 +11,6 @@
 /***********************************************************************************************************************
  * I N C L U D E S
  **********************************************************************************************************************/
-#include "Loclib.h"
-#include "Z21Slave.h"
 #include <Arduino.h>
 
 /***********************************************************************************************************************
@@ -36,6 +34,49 @@ public:
         color_yellow,
     };
 
+    /**
+     * Decoder step.
+     */
+    enum locoDecoderSteps
+    {
+        locoDecoderSpeedSteps14 = 0,
+        locoDecoderSpeedSteps28,
+        locoDecoderSpeedSteps128,
+        locoDecoderSpeedStepsUnknown,
+    };
+
+    /**
+     * Locomotive direction.
+     */
+    enum locoDirection
+    {
+        locoDirectionForward = 0,
+        locoDirectionBackward
+    };
+
+    /**
+     * Light of locomotive.
+     */
+    enum locoLight
+    {
+        locoLightOn = 0,
+        locoLightOff
+    };
+
+    /**
+     * Structure with received locomotive data.
+     */
+    struct locoInfo
+    {
+        uint16_t Address;
+        uint8_t Speed;
+        locoDecoderSteps Steps;
+        locoDirection Direction;
+        locoLight Light;
+        uint32_t Functions;
+        bool Occupied;
+    };
+
     /* Constructor */
     WmcTft();
 
@@ -43,6 +84,11 @@ public:
      *  Init the display functions.
      */
     void Init(void);
+
+    /**
+     * Show info
+     */
+    void ShowName(void);
 
     /**
      * Clear the display.,
@@ -73,8 +119,7 @@ public:
     /**
      * Update loc data.
      */
-    void UpdateLocInfo(
-        Z21Slave::locInfo* locInfoRcvPtr, Z21Slave::locInfo* locInfoActPtr, uint8_t* assignedFunctions, bool updateAll);
+    void UpdateLocInfo(locoInfo* locInfoRcvPtr, locoInfo* locInfoActPtr, uint8_t* assignedFunctions, bool updateAll);
 
     /**
      * Show | or - as indicating waiting on something.
@@ -120,6 +165,11 @@ public:
      * Show in middle of upper row the decoder step of selected loc.
      */
     void ShowLocDecoderSteps(uint8_t Steps);
+
+    /**
+     * Show screen to uodate XpNet address.
+     */
+    void ShowXpNetAddress(uint16_t Address);
 
     /**
      * Screen for adding functions.

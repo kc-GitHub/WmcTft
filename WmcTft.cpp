@@ -5,7 +5,7 @@
 // include this library's description file
 #include "WmcTft.h"
 #include "Adafruit_ST7735.h"
-#include "Loclib.h"
+#include "app_cfg.h"
 #include <string.h>
 
 /**
@@ -81,12 +81,7 @@ const unsigned char TurnoutForwardBitmap[] = { 0xff, 0xff, 0xff, 0xf0, 0xff, 0xf
     0xff, 0xff, 0xf0, 0xff, 0xff, 0xff, 0xf0, 0xff, 0xff, 0xff, 0xf0, 0xff, 0xff, 0xff, 0xf0, 0xff, 0xff, 0xff, 0xf0 };
 
 // These pins will also work for the 1.8" TFT shield
-#define TFT_RST D2
-#define TFT_DC D1
-#define TFT_CS D8
-#define TFT_SCLK D3
-#define TFT_MOSI D4
-Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
+Adafruit_ST7735 tft = Adafruit_ST7735(APP_CFG_CS, APP_CFG_DC, APP_CFG_SDA, APP_CFG_SCL, APP_CFG_RST);
 
 #define GRAY 0xE73C
 
@@ -101,11 +96,21 @@ void WmcTft::Init(void)
     // Initialize a ST7735S chip / display and show text.
     tft.initR(INITR_GREENTAB);
     tft.setTextWrap(false);
+    ShowName();
+}
+
+void WmcTft::ShowName(void)
+{
     tft.fillScreen(ST7735_BLACK);
-    tft.setCursor(37, 40);
     tft.setTextColor(ST7735_GREEN);
     tft.setTextSize(2);
+#if APP_CFG_UC == APP_CFG_UC_ESP8266
+    tft.setCursor(37, 40);
     tft.println("WIFI");
+#else
+    tft.setCursor(34, 40);
+    tft.println(" XMC");
+#endif
     tft.setCursor(27, 60);
     tft.println("MANUAL");
     tft.setCursor(22, 80);
@@ -176,8 +181,7 @@ void WmcTft::UpdateSelectedAndNumberOfLocs(uint8_t actualLocIndex, uint8_t Numbe
 
 /***********************************************************************************************************************
  */
-void WmcTft::UpdateLocInfo(
-    Z21Slave::locInfo* locInfoRcvPtr, Z21Slave::locInfo* locInfoActPtr, uint8_t* assignedFunctions, bool updateAll)
+void WmcTft::UpdateLocInfo(locoInfo* locInfoRcvPtr, locoInfo* locInfoActPtr, uint8_t* assignedFunctions, bool updateAll)
 {
     uint8_t Index    = 0;
     uint8_t Function = 0;
@@ -185,7 +189,7 @@ void WmcTft::UpdateLocInfo(
     if ((updateAll == true) || (locInfoRcvPtr->Direction != locInfoActPtr->Direction)
         || (locInfoRcvPtr->Occupied != locInfoActPtr->Occupied))
     {
-        if (locInfoRcvPtr->Direction == Z21Slave::locDirectionForward)
+        if (locInfoRcvPtr->Direction == locoDirectionForward)
         {
             if (locInfoRcvPtr->Occupied == false)
             {
@@ -219,10 +223,10 @@ void WmcTft::UpdateLocInfo(
     {
         switch (locInfoRcvPtr->Steps)
         {
-        case Z21Slave::locDecoderSpeedSteps14: ShowLocDecoderSteps(14); break;
-        case Z21Slave::locDecoderSpeedSteps28: ShowLocDecoderSteps(28); break;
-        case Z21Slave::locDecoderSpeedSteps128: ShowLocDecoderSteps(128); break;
-        case Z21Slave::locDecoderSpeedStepsUnknown: ShowLocDecoderSteps(28); break;
+        case locoDecoderSpeedSteps14: ShowLocDecoderSteps(14); break;
+        case locoDecoderSpeedSteps28: ShowLocDecoderSteps(28); break;
+        case locoDecoderSpeedSteps128: ShowLocDecoderSteps(128); break;
+        case locoDecoderSpeedStepsUnknown: ShowLocDecoderSteps(28); break;
         }
     }
 
@@ -240,7 +244,7 @@ void WmcTft::UpdateLocInfo(
     /* Show light symbol (or not) depending on light status. */
     if ((updateAll == true) || (locInfoRcvPtr->Light != locInfoActPtr->Light))
     {
-        if (locInfoRcvPtr->Light == Z21Slave::locLightOn)
+        if (locInfoRcvPtr->Light == locoLightOn)
         {
             tft.drawBitmap(80, 50, bulbBitmapOn, 28, 28, ST7735_BLACK, ST7735_WHITE);
         }
@@ -415,6 +419,17 @@ void WmcTft::ShowLocDecoderSteps(uint8_t Steps)
 
 /***********************************************************************************************************************
  */
+void WmcTft::ShowXpNetAddress(uint16_t Address)
+{
+    tft.fillRect(10, 22, 70, 30, ST7735_BLACK);
+    tft.setCursor(10, 22);
+    tft.setTextColor(ST7735_GREEN);
+    tft.setTextSize(3);
+    tft.print(Address);
+}
+
+/***********************************************************************************************************************
+ */
 void WmcTft::FunctionAddSet()
 {
     uint8_t Index;
@@ -512,13 +527,15 @@ void WmcTft::UpdateFunction(uint8_t Index, uint8_t Function)
  */
 void WmcTft::CommandLine(void)
 {
-    tft.setCursor(23, 40);
+    tft.setCursor(23, 30);
     tft.setTextColor(ST7735_GREEN);
     tft.setTextSize(2);
     tft.println(" PRESS");
-    tft.setCursor(23, 60);
-    tft.println(" RESET");
-    tft.setCursor(22, 80);
+    tft.setCursor(9, 50);
+    tft.println(" RESET OR");
+    tft.setCursor(7, 70);
+    tft.println("POWERCYCLE");
+    tft.setCursor(22, 90);
     tft.println("TO EXIT");
 }
 
@@ -583,7 +600,7 @@ void WmcTft::ShowDccNumber(uint16_t CvNUmber, bool Init, bool PomActive)
     }
     else
     {
-        tft.fillRect(60, 65, 65, 30, ST7735_BLACK);
+        tft.fillRect(60, 65, 68, 30, ST7735_BLACK);
         tft.setCursor(60, 65);
     }
 
