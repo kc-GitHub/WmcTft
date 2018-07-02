@@ -353,6 +353,9 @@ void WmcTft::ShowMenu()
     tft.setCursor(0, 22);
     tft.setTextColor(ST7735_GREEN);
     tft.setTextSize(2);
+#if APP_CFG_UC == APP_CFG_UC_STM32
+    tft.println("0 XPNET ");
+#endif
     tft.println("1 ADD");
     tft.println("2 CHANGE");
     tft.println("3 DELETE");
