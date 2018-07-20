@@ -359,8 +359,8 @@ void WmcTft::ShowMenu()
     tft.println("1 ADD");
     tft.println("2 CHANGE");
     tft.println("3 DELETE");
-#if APP_CFG_UC == APP_CFG_UC_ESP8266
     tft.println("4 CV PROG");
+#if APP_CFG_UC == APP_CFG_UC_ESP8266
     tft.println("5 POM PROG");
 #endif
 }
