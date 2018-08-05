@@ -99,6 +99,20 @@ void WmcTft::Init(void)
     ShowName();
 }
 
+/***********************************************************************************************************************
+ */
+void WmcTft::ShowVersion(uint8_t SwMajor, uint8_t SwMinor, uint8_t SwPatch)
+{
+    char VersionStr[20];
+
+    snprintf(VersionStr, sizeof(VersionStr), "%02hu.%02hu.%02hu", SwMajor, SwMinor, SwPatch);
+    tft.setTextSize(1);
+    tft.setCursor(39, 103);
+    tft.print(VersionStr);
+}
+
+/***********************************************************************************************************************
+ */
 void WmcTft::ShowName(void)
 {
     tft.fillScreen(ST7735_BLACK);

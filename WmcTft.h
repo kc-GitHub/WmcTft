@@ -86,6 +86,11 @@ public:
     void Init(void);
 
     /**
+     * Show version info.
+     */
+    void ShowVersion(uint8_t SwMajor, uint8_t SwMinor, uint8_t SwPatch);
+
+    /**
      * Show info
      */
     void ShowName(void);
