@@ -363,7 +363,11 @@ void WmcTft::UdpConnectFailed()
 void WmcTft::ShowMenu1()
 {
     Clear();
+#if APP_CFG_UC == APP_CFG_UC_STM32
     UpdateStatus("MENU 1", true, WmcTft::color_green);
+#else
+    UpdateStatus("MENU", true, WmcTft::color_green);
+#endif
     tft.setCursor(0, 22);
     tft.setTextColor(ST7735_GREEN);
     tft.setTextSize(2);
