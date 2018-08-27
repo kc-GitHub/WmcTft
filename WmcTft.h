@@ -142,9 +142,19 @@ public:
     void UdpConnectFailed();
 
     /**
-     * Display menu.
+     * Display first menu.
      */
-    void ShowMenu();
+    void ShowMenu1();
+
+    /**
+     * Display second menu.
+     */
+    void ShowMenu2();
+
+    /**
+     * Display erase.
+     */
+    void ShowErase();
 
     /**
      * Show initial turnout screen.

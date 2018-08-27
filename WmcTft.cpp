@@ -360,16 +360,13 @@ void WmcTft::UdpConnectFailed()
 
 /***********************************************************************************************************************
  */
-void WmcTft::ShowMenu()
+void WmcTft::ShowMenu1()
 {
     Clear();
-    UpdateStatus("MENU", true, WmcTft::color_green);
+    UpdateStatus("MENU 1", true, WmcTft::color_green);
     tft.setCursor(0, 22);
     tft.setTextColor(ST7735_GREEN);
     tft.setTextSize(2);
-#if APP_CFG_UC == APP_CFG_UC_STM32
-    tft.println("0 XPNET ");
-#endif
     tft.println("1 ADD");
     tft.println("2 CHANGE");
     tft.println("3 DELETE");
@@ -377,6 +374,36 @@ void WmcTft::ShowMenu()
 #if APP_CFG_UC == APP_CFG_UC_ESP8266
     tft.println("5 POM PROG");
 #endif
+}
+
+/***********************************************************************************************************************
+ */
+void WmcTft::ShowMenu2()
+{
+    Clear();
+    UpdateStatus("MENU 2", true, WmcTft::color_green);
+    tft.setCursor(0, 22);
+    tft.setTextColor(ST7735_GREEN);
+    tft.setTextSize(2);
+#if APP_CFG_UC == APP_CFG_UC_STM32
+    tft.println("1 XPNET ");
+    tft.println("2 DEL LOCS");
+    tft.println("3 DEL ALL");
+#else
+    tft.println("2 DEL LOCS");
+    tft.println("3 DEL ALL");
+#endif
+}
+
+/***********************************************************************************************************************
+ */
+void WmcTft::ShowErase()
+{
+    Clear();
+    tft.setCursor(10, 50);
+    tft.setTextColor(ST7735_GREEN);
+    tft.setTextSize(2);
+    tft.println(" ERASING");
 }
 
 /***********************************************************************************************************************
