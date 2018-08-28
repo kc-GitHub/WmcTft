@@ -363,11 +363,7 @@ void WmcTft::UdpConnectFailed()
 void WmcTft::ShowMenu1()
 {
     Clear();
-#if APP_CFG_UC == APP_CFG_UC_STM32
     UpdateStatus("MENU 1", true, WmcTft::color_green);
-#else
-    UpdateStatus("MENU", true, WmcTft::color_green);
-#endif
     tft.setCursor(0, 22);
     tft.setTextColor(ST7735_GREEN);
     tft.setTextSize(2);
@@ -394,8 +390,8 @@ void WmcTft::ShowMenu2()
     tft.println("2 DEL LOCS");
     tft.println("3 DEL ALL");
 #else
-    tft.println("2 DEL LOCS");
-    tft.println("3 DEL ALL");
+    tft.println("1 DEL LOCS");
+    tft.println("2 DEL ALL");
 #endif
 }
 
@@ -599,6 +595,7 @@ uint16_t WmcTft::getColor(color Clr)
     case color_red: ColorReturn = ST7735_RED; break;
     case color_green: ColorReturn = ST7735_GREEN; break;
     case color_yellow: ColorReturn = ST7735_YELLOW; break;
+    case color_white: ColorReturn = ST7735_WHITE; break;
     default: ColorReturn = ST7735_RED; break;
     }
 
