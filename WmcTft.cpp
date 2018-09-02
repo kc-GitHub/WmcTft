@@ -378,20 +378,45 @@ void WmcTft::ShowMenu1()
 
 /***********************************************************************************************************************
  */
-void WmcTft::ShowMenu2()
+void WmcTft::ShowMenu2(bool emergencyStop, bool clearScreen)
 {
-    Clear();
-    UpdateStatus("MENU 2", true, WmcTft::color_green);
+    if (clearScreen == true)
+    {
+        Clear();
+        UpdateStatus("MENU 2", true, WmcTft::color_green);
+    }
+
     tft.setCursor(0, 22);
     tft.setTextColor(ST7735_GREEN);
     tft.setTextSize(2);
 #if APP_CFG_UC == APP_CFG_UC_STM32
     tft.println("1 XPNET ");
-    tft.println("2 DEL LOCS");
-    tft.println("3 DEL ALL");
+    tft.fillRect(0, 36, 128, 17, 0);
+    if (emergencyStop == true)
+    {
+        tft.println("2 EM STOP  ");
+    }
+    else
+    {
+        tft.println("2 OFF      ");
+    }
+    tft.println("");
+    tft.println("4 DEL LOCS");
+    tft.println("5 DEL ALL");
 #else
-    tft.println("1 DEL LOCS");
-    tft.println("2 DEL ALL");
+    tft.println("");
+    tft.fillRect(0, 36, 128, 17, 0);
+    if (emergencyStop == true)
+    {
+        tft.println("2 EM STOP  ");
+    }
+    else
+    {
+        tft.println("2 OFF      ");
+    }
+    tft.println("");
+    tft.println("4 DEL LOCS");
+    tft.println("5 DEL ALL");
 #endif
 }
 

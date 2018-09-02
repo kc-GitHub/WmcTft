@@ -149,7 +149,7 @@ public:
     /**
      * Display second menu.
      */
-    void ShowMenu2();
+    void ShowMenu2(bool emergencyStop, bool clearScreen);
 
     /**
      * Display erase.
