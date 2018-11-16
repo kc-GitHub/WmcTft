@@ -728,6 +728,7 @@ void WmcTft::ShowDccValueRemove(bool PomActive)
         tft.fillRect(5, 90, 122, 38, ST7735_BLACK);
     }
 }
+
 /***********************************************************************************************************************
  */
 void WmcTft::ShowDccNumberRemove(bool PomActive)
@@ -740,4 +741,22 @@ void WmcTft::ShowDccNumberRemove(bool PomActive)
     {
         tft.fillRect(5, 55, 122, 38, ST7735_BLACK);
     }
+}
+
+/***********************************************************************************************************************
+ */
+void WmcTft::ShowButtonToPress(uint8_t Button)
+{
+    tft.setCursor(0, 22);
+    tft.setTextColor(ST7735_GREEN);
+    tft.setTextSize(2);
+    tft.println("   PRESS");
+    tft.println("    AND ");
+    tft.println("  RELEASE");
+    tft.println("  BUTTON");
+
+    tft.fillRect(60, 100, 50, 15, ST7735_BLACK);
+    tft.setCursor(60, 100);
+    tft.setTextColor(ST7735_YELLOW);
+    tft.print(Button);
 }
