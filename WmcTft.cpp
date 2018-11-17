@@ -96,7 +96,9 @@ void WmcTft::Init(void)
     // Initialize a ST7735S chip / display and show text.
     tft.initR(INITR_GREENTAB);
     tft.setTextWrap(false);
+#if APP_CFG_UC == APP_CFG_UC_STM32
     ShowName();
+#endif
 }
 
 /***********************************************************************************************************************
@@ -279,7 +281,7 @@ void WmcTft::UpdateLocInfo(locoInfo* locInfoRcvPtr, locoInfo* locInfoActPtr, uin
                 || (((locInfoRcvPtr->Functions & (1 << (Function - 1)))
                        != (locInfoActPtr->Functions & (1 << (Function - 1))))))
             {
-                if ((locInfoRcvPtr->Functions & (1 << (Function - 1))) == (1 << (Function - 1)))
+                if ((locInfoRcvPtr->Functions & (1 << (Function - 1))) == (uint32_t)((1 << (Function - 1))))
                 {
                     tft.drawBitmap(9 + (Index * 23), 100, FuntionBackgroundBitmap, 20, 20, ST7735_BLACK, ST7735_GREEN);
                 }
