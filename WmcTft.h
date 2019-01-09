@@ -88,7 +88,7 @@ public:
     /**
      * Show version info.
      */
-    void ShowVersion(uint8_t SwMajor, uint8_t SwMinor, uint8_t SwPatch);
+    void ShowVersion(uint16_t SwMajor, uint8_t SwMinor, uint8_t SwPatch);
 
     /**
      * Show info

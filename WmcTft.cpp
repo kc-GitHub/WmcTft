@@ -103,11 +103,18 @@ void WmcTft::Init(void)
 
 /***********************************************************************************************************************
  */
-void WmcTft::ShowVersion(uint8_t SwMajor, uint8_t SwMinor, uint8_t SwPatch)
+void WmcTft::ShowVersion(uint16_t SwMajor, uint8_t SwMinor, uint8_t SwPatch)
 {
     char VersionStr[20];
 
-    snprintf(VersionStr, sizeof(VersionStr), "%02hu.%02hu.%02hu", SwMajor, SwMinor, SwPatch);
+    if (SwPatch != 99)
+    {
+        snprintf(VersionStr, sizeof(VersionStr), "%02hu.%02hu.%02hu", SwMajor, SwMinor, SwPatch);
+    }
+    else
+    {
+        snprintf(VersionStr, sizeof(VersionStr), " %04hu", SwMajor);
+    }
     tft.setTextSize(1);
     tft.setCursor(39, 103);
     tft.print(VersionStr);
