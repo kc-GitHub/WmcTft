@@ -168,6 +168,24 @@ void WmcTft::UpdateStatus(const char* StrPtr, bool clearRowFull, color textColor
 
 /***********************************************************************************************************************
  */
+void WmcTft::ShowIpAddressToConnectTo(const char* IpStr)
+{
+    uint16_t Length;
+
+    Length = strlen(IpStr);
+    Length *= 6;
+
+    // "Center" the IP address.
+    tft.setCursor(60 - (Length / 2), 14);
+    tft.setTextColor(getColor(WmcTft::color_yellow));
+    tft.setTextSize(1);
+    tft.print("(");
+    tft.print(IpStr);
+    tft.print(")");
+}
+
+/***********************************************************************************************************************
+ */
 void WmcTft::ShowNetworkName(const char* StrPtr)
 {
     uint16_t Length;
@@ -177,8 +195,8 @@ void WmcTft::ShowNetworkName(const char* StrPtr)
 
     /* "Center" the text under the status row. */
     tft.setCursor(56 - (Length / 2), 14);
-    tft.print("(");
     tft.setTextSize(1);
+    tft.print("(");
     tft.print(StrPtr);
     tft.print(")");
 }

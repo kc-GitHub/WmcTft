@@ -106,6 +106,11 @@ public:
     void UpdateStatus(const char* StrPtr, bool clearRowFull, color textColor);
 
     /**
+     * Show IP address where to WMC tries to conenct to.
+     */
+    void ShowIpAddressToConnectTo(const char* IpStr);
+
+    /**
      * Show the name is the network connecting to...
      */
     void ShowNetworkName(const char* StrPtr);
