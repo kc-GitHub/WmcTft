@@ -398,9 +398,7 @@ void WmcTft::ShowMenu1()
     tft.println("2 CHANGE");
     tft.println("3 DELETE");
     tft.println("4 CV PROG");
-#if APP_CFG_UC == APP_CFG_UC_ESP8266
     tft.println("5 POM PROG");
-#endif
 }
 
 /***********************************************************************************************************************
@@ -663,7 +661,7 @@ void WmcTft::ShowPomAddress(uint16_t Address, bool Init)
         tft.setCursor(5, 20);
         tft.setTextColor(ST7735_YELLOW);
         tft.setTextSize(1);
-        tft.print("POM address");
+        tft.print("POM loc address");
     }
 
     tft.fillRect(60, 30, 68, 30, ST7735_BLACK);
