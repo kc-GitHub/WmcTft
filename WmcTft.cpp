@@ -654,7 +654,7 @@ uint16_t WmcTft::getColor(color Clr)
 
 /***********************************************************************************************************************
  */
-void WmcTft::ShowPomAddress(uint16_t Address, bool Init)
+void WmcTft::ShowPomAddress(uint16_t Address, bool Init, color Clr)
 {
     if (Init == true)
     {
@@ -666,7 +666,7 @@ void WmcTft::ShowPomAddress(uint16_t Address, bool Init)
 
     tft.fillRect(60, 30, 68, 30, ST7735_BLACK);
     tft.setCursor(60, 30);
-    tft.setTextColor(ST7735_GREEN);
+    tft.setTextColor(getColor(Clr));
     tft.setTextSize(3);
     tft.print(Address);
 }

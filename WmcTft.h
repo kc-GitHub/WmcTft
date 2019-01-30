@@ -224,7 +224,7 @@ public:
     /**
      * Show address of loc for POM mode.
      */
-    void ShowPomAddress(uint16_t Address, bool Init);
+    void ShowPomAddress(uint16_t Address, bool Init, color Clr);
 
     /**
      * Show cv number.
