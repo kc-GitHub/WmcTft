@@ -357,6 +357,18 @@ void WmcTft::UpdateRunningWheel(uint8_t count)
 
 /***********************************************************************************************************************
  */
+void WmcTft::UpdateTransmitCount(uint8_t count, uint8_t totalCount)
+{
+    char TmpStr[10];
+    snprintf(TmpStr, sizeof(TmpStr), "%02hu/%02hu", count, totalCount);
+    tft.fillRect(95, 0, 128, 14, 0);
+    tft.setCursor(95, 4);
+    tft.setTextSize(1);
+    tft.print(TmpStr);
+}
+
+/***********************************************************************************************************************
+ */
 void WmcTft::WifiConnectFailed()
 {
     Clear();
@@ -425,7 +437,7 @@ void WmcTft::ShowMenu2(bool emergencyStop, bool clearScreen)
     {
         tft.println("2 OFF      ");
     }
-    tft.println("");
+    tft.println("3 TRANSMIT");
     tft.println("4 DEL LOCS");
     tft.println("5 DEL ALL");
 #else

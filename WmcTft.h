@@ -137,6 +137,11 @@ public:
     void UpdateRunningWheel(uint8_t count);
 
     /**
+     * Shoe transmitted loc number count when transmitting loc database
+     */
+    void UpdateTransmitCount(uint8_t count, uint8_t totalCount);
+
+    /**
      * Error message when connecting to Wifi failed.
      */
     void WifiConnectFailed();
