@@ -222,7 +222,8 @@ void WmcTft::UpdateSelectedAndNumberOfLocs(uint8_t actualLocIndex, uint8_t Numbe
 
 /***********************************************************************************************************************
  */
-void WmcTft::UpdateLocInfo(locoInfo* locInfoRcvPtr, locoInfo* locInfoActPtr, uint8_t* assignedFunctions, bool updateAll)
+void WmcTft::UpdateLocInfo(
+    locoInfo* locInfoRcvPtr, locoInfo* locInfoActPtr, uint8_t* assignedFunctions, char* LocName, bool updateAll)
 {
     uint8_t Index    = 0;
     uint8_t Function = 0;
@@ -256,8 +257,9 @@ void WmcTft::UpdateLocInfo(locoInfo* locInfoRcvPtr, locoInfo* locInfoActPtr, uin
 
     if ((updateAll == true) || (locInfoRcvPtr->Address != locInfoActPtr->Address))
     {
-        /* Show address. */
+        /* Show address and locname. */
         ShowlocAddress(locInfoRcvPtr->Address, WmcTft::color_green);
+        ShowlocName(LocName, WmcTft::color_green);
     }
 
     if ((updateAll == true) || (locInfoRcvPtr->Steps != locInfoActPtr->Steps))
@@ -516,6 +518,30 @@ void WmcTft::ShowlocAddress(uint16_t address, color textColor)
 
 /***********************************************************************************************************************
  */
+void WmcTft::ShowlocName(char* NamePtr, color textColor)
+{
+    uint16_t Length;
+    uint16_t Color;
+
+    tft.fillRect(0, 80, 127, 14, ST7735_BLACK);
+
+    // Only print name when string has data.
+    if (NamePtr != NULL)
+    {
+        // "Center" the locname address and print the name.
+        Length = strlen(NamePtr);
+        Length *= 6;
+        tft.setCursor(60 - (Length / 2), 83);
+
+        Color = getColor(textColor);
+        tft.setTextColor(Color);
+        tft.setTextSize(1);
+        tft.print(NamePtr);
+    }
+}
+
+/***********************************************************************************************************************
+ */
 void WmcTft::ShowLocDecoderSteps(uint8_t Steps)
 {
     tft.fillRect(65, 0, 19, 14, 0);
@@ -635,15 +661,13 @@ void WmcTft::UpdateFunction(uint8_t Index, uint8_t Function)
  */
 void WmcTft::CommandLine(void)
 {
-    tft.setCursor(23, 30);
     tft.setTextColor(ST7735_GREEN);
     tft.setTextSize(2);
-    tft.println(" PRESS");
-    tft.setCursor(9, 50);
+    tft.setCursor(9, 40);
     tft.println(" RESET OR");
-    tft.setCursor(7, 70);
+    tft.setCursor(7, 60);
     tft.println("POWERCYCLE");
-    tft.setCursor(22, 90);
+    tft.setCursor(22, 890);
     tft.println("TO EXIT");
 }
 

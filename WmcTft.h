@@ -129,7 +129,8 @@ public:
     /**
      * Update loc data.
      */
-    void UpdateLocInfo(locoInfo* locInfoRcvPtr, locoInfo* locInfoActPtr, uint8_t* assignedFunctions, bool updateAll);
+    void UpdateLocInfo(
+        locoInfo* locInfoRcvPtr, locoInfo* locInfoActPtr, uint8_t* assignedFunctions, char* LocName, bool updateAll);
 
     /**
      * Show | or - as indicating waiting on something.
@@ -185,6 +186,11 @@ public:
      * Show loc address.
      */
     void ShowlocAddress(uint16_t address, color textColor);
+
+    /**
+     * Show name of loc (when present)
+     */
+    void ShowlocName(char* NamePtr, color textColor);
 
     /**
      * Show in middle of upper row the decoder step of selected loc.
