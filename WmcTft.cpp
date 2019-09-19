@@ -453,7 +453,7 @@ void WmcTft::ShowMenu2(bool emergencyStop, bool clearScreen)
     {
         tft.println("2 OFF      ");
     }
-    tft.println("");
+    tft.println("3 TRANSMIT");
     tft.println("4 DEL LOCS");
     tft.println("5 DEL ALL");
 #endif
