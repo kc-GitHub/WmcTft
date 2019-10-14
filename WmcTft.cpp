@@ -3,10 +3,10 @@
  */
 
 // include this library's description file
-#include "WmcTft.h"
-#include "Adafruit_ST7735.h"
-#include "app_cfg.h"
 #include <string.h>
+#include "WmcTft.h"
+#include "app_cfg.h"
+#include "Adafruit_ST7735.h"
 
 /**
  * Forward direction loc symbol.
