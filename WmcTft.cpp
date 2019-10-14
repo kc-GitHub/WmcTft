@@ -430,6 +430,9 @@ void WmcTft::ShowMenu2(bool emergencyStop, bool clearScreen)
     tft.setTextSize(2);
 #if APP_CFG_UC == APP_CFG_UC_STM32
     tft.println("1 XPNET ");
+#else
+    tft.println("");
+#endif
     tft.fillRect(0, 36, 128, 17, 0);
     if (emergencyStop == true)
     {
@@ -442,21 +445,6 @@ void WmcTft::ShowMenu2(bool emergencyStop, bool clearScreen)
     tft.println("3 TRANSMIT");
     tft.println("4 DEL LOCS");
     tft.println("5 DEL ALL");
-#else
-    tft.println("");
-    tft.fillRect(0, 36, 128, 17, 0);
-    if (emergencyStop == true)
-    {
-        tft.println("2 EM STOP  ");
-    }
-    else
-    {
-        tft.println("2 OFF      ");
-    }
-    tft.println("");
-    tft.println("4 DEL LOCS");
-    tft.println("5 DEL ALL");
-#endif
 }
 
 /***********************************************************************************************************************
