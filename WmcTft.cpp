@@ -277,66 +277,24 @@ void WmcTft::UpdateLocInfo(
     if ((updateAll == true) || (locInfoRcvPtr->Speed != locInfoActPtr->Speed))
     {
         /* Show Speed. */
-        tft.fillRect(0, 53, 75, 30, ST7735_BLACK);
-        tft.setCursor(10, 53);
-        tft.setTextColor(ST7735_GREEN);
-        tft.setTextSize(3);
-        tft.println(locInfoRcvPtr->Speed);
+      ShowlocSpeed(locInfoRcvPtr->Speed);
     }
 
     /* Show light symbol (or not) depending on light status. */
     if ((updateAll == true) || (locInfoRcvPtr->Light != locInfoActPtr->Light))
     {
-        if (locInfoRcvPtr->Light == locoLightOn)
-        {
-            tft.drawBitmap(80, 50, bulbBitmapOn, 28, 28, ST7735_BLACK, ST7735_WHITE);
-        }
-        else
-        {
-            tft.fillRect(80, 50, 28, 28, ST7735_BLACK);
-        }
+      ShowLampStatus(locInfoRcvPtr->Light);
     }
-
-    tft.setTextSize(1);
 
     for (Index = 0; Index < 5; Index++)
     {
         Function = assignedFunctions[Index];
-        if (Function != 0)
-        {
             if ((updateAll == true)
                 || (((locInfoRcvPtr->Functions & (1 << (Function - 1)))
                        != (locInfoActPtr->Functions & (1 << (Function - 1))))))
             {
-                if ((locInfoRcvPtr->Functions & (1 << (Function - 1))) == (uint32_t)((1 << (Function - 1))))
-                {
-                    tft.drawBitmap(9 + (Index * 23), 100, FuntionBackgroundBitmap, 20, 20, ST7735_BLACK, ST7735_GREEN);
-                }
-                else
-                {
-                    tft.drawBitmap(9 + (Index * 23), 100, FuntionBackgroundBitmap, 20, 20, ST7735_BLACK, GRAY);
-                }
-
-                tft.setTextColor(ST7735_BLACK);
-                if (Function < 10)
-                {
-                    tft.setCursor(17 + (Index * 23), 107);
-                }
-                else if (Function < 20)
-                {
-                    tft.setCursor(13 + (Index * 23), 107);
-                }
-                else
-                {
-                    tft.setCursor(12 + (Index * 23), 107);
-                }
-                tft.print(Function);
+              ShowFunction(locInfoRcvPtr->Functions, Function, Index);
             }
-        }
-        else
-        {
-            tft.fillRect(9, 100, 21, 21, 0);
-        }
     }
 }
 
@@ -502,6 +460,69 @@ void WmcTft::ShowlocAddress(uint16_t address, color textColor)
     tft.setTextColor(Color);
     tft.setTextSize(3);
     tft.print(address);
+}
+
+/***********************************************************************************************************************
+ */
+void WmcTft::ShowlocSpeed(uint8_t Speed)
+{
+    tft.fillRect(0, 53, 75, 30, ST7735_BLACK);
+    tft.setCursor(10, 53);
+    tft.setTextColor(ST7735_GREEN);
+    tft.setTextSize(3);
+    tft.println(Speed);
+}
+
+/***********************************************************************************************************************
+ */
+void WmcTft::ShowLampStatus(locoLight Light)
+{
+    if (Light == locoLightOn)
+    {
+      tft.drawBitmap(80, 50, bulbBitmapOn, 28, 28, ST7735_BLACK, ST7735_WHITE);
+    }
+    else
+    {
+      tft.fillRect(80, 50, 28, 28, ST7735_BLACK);
+    }
+}
+
+/***********************************************************************************************************************
+ */
+void WmcTft::ShowFunction(uint32_t Functions, uint8_t Function, uint8_t Location)
+{
+    tft.setTextSize(1);
+
+    if (Function != 0)
+    {
+        if ((Functions & (1 << (Function - 1))) == (uint32_t)((1 << (Function - 1))))
+        {
+          tft.drawBitmap(9 + (Location * 23), 100, FuntionBackgroundBitmap, 20, 20, ST7735_BLACK, ST7735_GREEN);
+        }
+        else
+        {
+          tft.drawBitmap(9 + (Location * 23), 100, FuntionBackgroundBitmap, 20, 20, ST7735_BLACK, GRAY);
+        }
+
+        tft.setTextColor(ST7735_BLACK);
+        if (Function < 10)
+        {
+          tft.setCursor(17 + (Location * 23), 107);
+        }
+        else if (Function < 20)
+        {
+          tft.setCursor(13 + (Location * 23), 107);
+        }
+        else
+        {
+          tft.setCursor(12 + (Location * 23), 107);
+        }
+        tft.print(Function);
+    }
+    else
+    {
+        tft.fillRect(9, 100, 21, 21, 0);
+    }
 }
 
 /***********************************************************************************************************************

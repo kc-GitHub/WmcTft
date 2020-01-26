@@ -188,6 +188,21 @@ public:
     void ShowlocAddress(uint16_t address, color textColor);
 
     /**
+     * Show loc speed
+     */
+    void ShowlocSpeed(uint8_t Speed);
+
+    /**
+     * Enable or disable the light symbol.
+     */
+    void ShowLampStatus(locoLight Light);
+
+    /**
+     * Draw a fucntion symbol
+     */
+    void ShowFunction(uint32_t Functions, uint8_t Function, uint8_t Location);
+
+    /**
      * Show name of loc (when present)
      */
     void ShowlocName(char* NamePtr, color textColor);
