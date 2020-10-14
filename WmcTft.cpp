@@ -4,7 +4,7 @@
 
 // include this library's description file
 #include "WmcTft.h"
-#include "Adafruit_ST7735.h"
+#include <TFT_eSPI.h>
 #include "app_cfg.h"
 #include <string.h>
 
@@ -81,7 +81,7 @@ const unsigned char TurnoutForwardBitmap[] = { 0xff, 0xff, 0xff, 0xf0, 0xff, 0xf
     0xff, 0xff, 0xf0, 0xff, 0xff, 0xff, 0xf0, 0xff, 0xff, 0xff, 0xf0, 0xff, 0xff, 0xff, 0xf0, 0xff, 0xff, 0xff, 0xf0 };
 
 // These pins will also work for the 1.8" TFT shield
-Adafruit_ST7735 tft = Adafruit_ST7735(APP_CFG_CS, APP_CFG_DC, APP_CFG_SDA, APP_CFG_SCL, APP_CFG_RST);
+TFT_eSPI tft = TFT_eSPI();  // Invoke library, pins defined in User_Setup.h
 
 #define GRAY 0xE73C
 
@@ -93,8 +93,11 @@ WmcTft::WmcTft() {}
  */
 void WmcTft::Init(void)
 {
-    // Initialize a ST7735S chip / display and show text.
-    tft.initR(INITR_GREENTAB);
+	// initialize TFT display
+	tft.init();
+	tft.fillScreen(TFT_BLACK);
+	tft.setRotation(2);
+
     tft.setTextWrap(false);
 #if APP_CFG_UC == APP_CFG_UC_STM32
     ShowName();
@@ -124,8 +127,8 @@ void WmcTft::ShowVersion(uint16_t SwMajor, uint8_t SwMinor, uint8_t SwPatch)
  */
 void WmcTft::ShowName(void)
 {
-    tft.fillScreen(ST7735_BLACK);
-    tft.setTextColor(ST7735_GREEN);
+    tft.fillScreen(TFT_BLACK);
+    tft.setTextColor(TFT_GREEN);
     tft.setTextSize(2);
 #if APP_CFG_UC == APP_CFG_UC_ESP8266
     tft.setCursor(37, 40);
@@ -142,7 +145,7 @@ void WmcTft::ShowName(void)
 
 /***********************************************************************************************************************
  */
-void WmcTft::Clear(void) { tft.fillScreen(ST7735_BLACK); }
+void WmcTft::Clear(void) { tft.fillScreen(TFT_BLACK); }
 
 /***********************************************************************************************************************
  */
@@ -212,7 +215,7 @@ void WmcTft::UpdateSelectedAndNumberOfLocs(uint8_t actualLocIndex, uint8_t Numbe
     tft.fillRect(88, 0, 128, 14, 0);
     tft.setCursor(88, 5);
     tft.setTextSize(1);
-    tft.setTextColor(ST7735_GREEN);
+    tft.setTextColor(TFT_GREEN);
     tft.print("(");
     tft.print(actualLocIndex);
     tft.print("/");
@@ -333,7 +336,7 @@ void WmcTft::WifiConnectFailed()
 {
     Clear();
     tft.setCursor(37, 40);
-    tft.setTextColor(ST7735_RED);
+    tft.setTextColor(TFT_RED);
     tft.setTextSize(2);
     tft.println("WIFI");
     tft.setCursor(21, 60);
@@ -348,7 +351,7 @@ void WmcTft::UdpConnectFailed()
 {
     Clear();
     tft.setCursor(1, 40);
-    tft.setTextColor(ST7735_RED);
+    tft.setTextColor(TFT_RED);
     tft.setTextSize(2);
     tft.println("Z21 CONTROL");
     tft.setCursor(24, 60);
@@ -364,7 +367,7 @@ void WmcTft::ShowMenu1()
     Clear();
     UpdateStatus("MENU 1", true, WmcTft::color_green);
     tft.setCursor(0, 22);
-    tft.setTextColor(ST7735_GREEN);
+    tft.setTextColor(TFT_GREEN);
     tft.setTextSize(2);
     tft.println("1 ADD");
     tft.println("2 CHANGE");
@@ -384,7 +387,7 @@ void WmcTft::ShowMenu2(bool emergencyStop, bool clearScreen)
     }
 
     tft.setCursor(0, 22);
-    tft.setTextColor(ST7735_GREEN);
+    tft.setTextColor(TFT_GREEN);
     tft.setTextSize(2);
 #if APP_CFG_UC == APP_CFG_UC_STM32
     tft.println("1 XPNET ");
@@ -411,7 +414,7 @@ void WmcTft::ShowErase()
 {
     Clear();
     tft.setCursor(10, 50);
-    tft.setTextColor(ST7735_GREEN);
+    tft.setTextColor(TFT_GREEN);
     tft.setTextSize(2);
     tft.println(" ERASING");
 }
@@ -422,16 +425,16 @@ void WmcTft::ShowTurnoutScreen()
 {
     UpdateStatus("TURNOUT", true, WmcTft::color_green);
 
-    tft.drawBitmap(85, 20, TurnoutBitmap, 28, 28, ST7735_BLACK, ST7735_WHITE);
+    tft.drawBitmap(85, 20, TurnoutBitmap, 28, 28, TFT_BLACK, TFT_WHITE);
 }
 
 /***********************************************************************************************************************
  */
 void WmcTft::ShowTurnoutAddress(uint16_t address)
 {
-    tft.fillRect(10, 22, 70, 30, ST7735_BLACK);
+    tft.fillRect(10, 22, 70, 30, TFT_BLACK);
     tft.setCursor(10, 22);
-    tft.setTextColor(ST7735_GREEN);
+    tft.setTextColor(TFT_GREEN);
     tft.setTextSize(3);
     tft.print(address);
 }
@@ -442,10 +445,10 @@ void WmcTft::ShowTurnoutDirection(uint8_t direction)
 {
     switch (direction)
     {
-    case 0: tft.drawBitmap(85, 20, TurnoutBitmap, 28, 28, ST7735_BLACK, ST7735_WHITE); break;
-    case 1: tft.drawBitmap(85, 20, TurnoutForwardBitmap, 28, 28, ST7735_BLACK, ST7735_WHITE); break;
-    case 2: tft.drawBitmap(85, 20, TurnoutLeftBitmap, 28, 28, ST7735_BLACK, ST7735_WHITE); break;
-    default: tft.drawBitmap(85, 20, TurnoutBitmap, 28, 28, ST7735_BLACK, ST7735_WHITE); break;
+    case 0: tft.drawBitmap(85, 20, TurnoutBitmap, 28, 28, TFT_BLACK, TFT_WHITE); break;
+    case 1: tft.drawBitmap(85, 20, TurnoutForwardBitmap, 28, 28, TFT_BLACK, TFT_WHITE); break;
+    case 2: tft.drawBitmap(85, 20, TurnoutLeftBitmap, 28, 28, TFT_BLACK, TFT_WHITE); break;
+    default: tft.drawBitmap(85, 20, TurnoutBitmap, 28, 28, TFT_BLACK, TFT_WHITE); break;
     }
 }
 
@@ -454,7 +457,7 @@ void WmcTft::ShowTurnoutDirection(uint8_t direction)
 void WmcTft::ShowlocAddress(uint16_t address, color textColor)
 {
     uint16_t Color;
-    tft.fillRect(10, 22, 70, 30, ST7735_BLACK);
+    tft.fillRect(10, 22, 70, 30, TFT_BLACK);
     tft.setCursor(10, 22);
     Color = getColor(textColor);
     tft.setTextColor(Color);
@@ -466,9 +469,9 @@ void WmcTft::ShowlocAddress(uint16_t address, color textColor)
  */
 void WmcTft::ShowlocSpeed(uint8_t Speed)
 {
-    tft.fillRect(0, 53, 75, 30, ST7735_BLACK);
+    tft.fillRect(0, 53, 75, 30, TFT_BLACK);
     tft.setCursor(10, 53);
-    tft.setTextColor(ST7735_GREEN);
+    tft.setTextColor(TFT_GREEN);
     tft.setTextSize(3);
     tft.println(Speed);
 }
@@ -479,11 +482,11 @@ void WmcTft::ShowLampStatus(locoLight Light)
 {
     if (Light == locoLightOn)
     {
-        tft.drawBitmap(80, 50, bulbBitmapOn, 28, 28, ST7735_BLACK, ST7735_WHITE);
+        tft.drawBitmap(80, 50, bulbBitmapOn, 28, 28, TFT_BLACK, TFT_WHITE);
     }
     else
     {
-        tft.fillRect(80, 50, 28, 28, ST7735_BLACK);
+        tft.fillRect(80, 50, 28, 28, TFT_BLACK);
     }
 }
 
@@ -497,14 +500,14 @@ void WmcTft::ShowFunction(uint32_t Functions, uint8_t Function, uint8_t Location
     {
         if ((Functions & (1 << (Function - 1))) == (uint32_t)((1 << (Function - 1))))
         {
-            tft.drawBitmap(9 + (Location * 23), 100, FuntionBackgroundBitmap, 20, 20, ST7735_BLACK, ST7735_GREEN);
+            tft.drawBitmap(9 + (Location * 23), 100, FuntionBackgroundBitmap, 20, 20, TFT_BLACK, TFT_GREEN);
         }
         else
         {
-            tft.drawBitmap(9 + (Location * 23), 100, FuntionBackgroundBitmap, 20, 20, ST7735_BLACK, GRAY);
+            tft.drawBitmap(9 + (Location * 23), 100, FuntionBackgroundBitmap, 20, 20, TFT_BLACK, GRAY);
         }
 
-        tft.setTextColor(ST7735_BLACK);
+        tft.setTextColor(TFT_BLACK);
         if (Function < 10)
         {
             tft.setCursor(17 + (Location * 23), 107);
@@ -532,7 +535,7 @@ void WmcTft::ShowlocName(char* NamePtr, color textColor)
     uint16_t Length;
     uint16_t Color;
 
-    tft.fillRect(0, 80, 127, 14, ST7735_BLACK);
+    tft.fillRect(0, 80, 127, 14, TFT_BLACK);
 
     // Only print name when string has data.
     if (NamePtr != NULL)
@@ -556,7 +559,7 @@ void WmcTft::ShowLocDecoderSteps(uint8_t Steps)
     tft.fillRect(65, 0, 19, 14, 0);
     tft.setCursor(65, 5);
     tft.setTextSize(1);
-    tft.setTextColor(ST7735_GREEN);
+    tft.setTextColor(TFT_GREEN);
     tft.print(Steps);
 }
 
@@ -564,9 +567,9 @@ void WmcTft::ShowLocDecoderSteps(uint8_t Steps)
  */
 void WmcTft::ShowXpNetAddress(uint16_t Address)
 {
-    tft.fillRect(10, 22, 70, 30, ST7735_BLACK);
+    tft.fillRect(10, 22, 70, 30, TFT_BLACK);
     tft.setCursor(10, 22);
-    tft.setTextColor(ST7735_GREEN);
+    tft.setTextColor(TFT_GREEN);
     tft.setTextSize(3);
     tft.print(Address);
 }
@@ -577,20 +580,20 @@ void WmcTft::FunctionAddSet()
 {
     uint8_t Index;
     tft.setCursor(10, 52);
-    tft.setTextColor(ST7735_GREEN);
+    tft.setTextColor(TFT_GREEN);
     tft.setTextSize(3);
     tft.print(0);
 
-    tft.setTextColor(ST7735_BLACK);
+    tft.setTextColor(TFT_BLACK);
     tft.setTextSize(1);
 
     for (Index = 0; Index < 5; Index++)
     {
-        tft.drawBitmap(9 + (Index * 23), 100, FuntionBackgroundBitmap, 20, 20, ST7735_BLACK, ST7735_GREEN);
+        tft.drawBitmap(9 + (Index * 23), 100, FuntionBackgroundBitmap, 20, 20, TFT_BLACK, TFT_GREEN);
         tft.setCursor(17 + (Index * 23), 107);
         tft.print(Index);
     }
-    tft.drawBitmap(80, 50, bulbBitmapOn, 28, 28, ST7735_BLACK, ST7735_WHITE);
+    tft.drawBitmap(80, 50, bulbBitmapOn, 28, 28, TFT_BLACK, TFT_WHITE);
 }
 
 /***********************************************************************************************************************
@@ -599,10 +602,10 @@ void WmcTft::ShowLocSymbolFw(color locSymbolColor)
 {
     switch (locSymbolColor)
     {
-    case color_red: tft.drawBitmap(85, 20, locBitmapFw, 28, 28, ST7735_BLACK, ST7735_RED); break;
-    case color_green: tft.drawBitmap(85, 20, locBitmapFw, 28, 28, ST7735_BLACK, ST7735_GREEN); break;
-    case color_white: tft.drawBitmap(85, 20, locBitmapFw, 28, 28, ST7735_BLACK, ST7735_WHITE); break;
-    case color_yellow: tft.drawBitmap(85, 20, locBitmapFw, 28, 28, ST7735_BLACK, ST7735_YELLOW); break;
+    case color_red: tft.drawBitmap(85, 20, locBitmapFw, 28, 28, TFT_BLACK, TFT_RED); break;
+    case color_green: tft.drawBitmap(85, 20, locBitmapFw, 28, 28, TFT_BLACK, TFT_GREEN); break;
+    case color_white: tft.drawBitmap(85, 20, locBitmapFw, 28, 28, TFT_BLACK, TFT_WHITE); break;
+    case color_yellow: tft.drawBitmap(85, 20, locBitmapFw, 28, 28, TFT_BLACK, TFT_YELLOW); break;
     }
 }
 
@@ -612,10 +615,10 @@ void WmcTft::ShowLocSymbolBw(color locSymbolColor)
 {
     switch (locSymbolColor)
     {
-    case color_red: tft.drawBitmap(85, 20, locBitmapBw, 28, 28, ST7735_BLACK, ST7735_RED); break;
-    case color_green: tft.drawBitmap(85, 20, locBitmapBw, 28, 28, ST7735_BLACK, ST7735_GREEN); break;
-    case color_white: tft.drawBitmap(85, 20, locBitmapBw, 28, 28, ST7735_BLACK, ST7735_WHITE); break;
-    case color_yellow: tft.drawBitmap(85, 20, locBitmapBw, 28, 28, ST7735_BLACK, ST7735_YELLOW); break;
+    case color_red: tft.drawBitmap(85, 20, locBitmapBw, 28, 28, TFT_BLACK, TFT_RED); break;
+    case color_green: tft.drawBitmap(85, 20, locBitmapBw, 28, 28, TFT_BLACK, TFT_GREEN); break;
+    case color_white: tft.drawBitmap(85, 20, locBitmapBw, 28, 28, TFT_BLACK, TFT_WHITE); break;
+    case color_yellow: tft.drawBitmap(85, 20, locBitmapBw, 28, 28, TFT_BLACK, TFT_YELLOW); break;
     }
 }
 
@@ -623,9 +626,9 @@ void WmcTft::ShowLocSymbolBw(color locSymbolColor)
  */
 void WmcTft::FunctionAddUpdate(uint16_t function)
 {
-    tft.fillRect(10, 50, 75, 25, ST7735_BLACK);
+    tft.fillRect(10, 50, 75, 25, TFT_BLACK);
     tft.setCursor(10, 52);
-    tft.setTextColor(ST7735_GREEN);
+    tft.setTextColor(TFT_GREEN);
     tft.setTextSize(3);
     tft.print(function);
 }
@@ -634,12 +637,12 @@ void WmcTft::FunctionAddUpdate(uint16_t function)
  */
 void WmcTft::UpdateFunction(uint8_t Index, uint8_t Function)
 {
-    tft.setTextColor(ST7735_BLACK);
+    tft.setTextColor(TFT_BLACK);
     tft.setTextSize(1);
 
     if ((Index == 0) && (Function == 0))
     {
-        tft.drawBitmap(80, 50, bulbBitmapOn, 28, 28, ST7735_BLACK, ST7735_WHITE);
+        tft.drawBitmap(80, 50, bulbBitmapOn, 28, 28, TFT_BLACK, TFT_WHITE);
         tft.fillRect(9, 100, 21, 21, 0);
     }
     else
@@ -648,7 +651,7 @@ void WmcTft::UpdateFunction(uint8_t Index, uint8_t Function)
         {
             tft.fillRect(80, 50, 28, 28, 0);
         }
-        tft.drawBitmap(9 + (Index * 23), 100, FuntionBackgroundBitmap, 20, 20, ST7735_BLACK, ST7735_GREEN);
+        tft.drawBitmap(9 + (Index * 23), 100, FuntionBackgroundBitmap, 20, 20, TFT_BLACK, TFT_GREEN);
 
         if (Function < 10)
         {
@@ -670,7 +673,7 @@ void WmcTft::UpdateFunction(uint8_t Index, uint8_t Function)
  */
 void WmcTft::CommandLine(void)
 {
-    tft.setTextColor(ST7735_GREEN);
+    tft.setTextColor(TFT_GREEN);
     tft.setTextSize(2);
     tft.setCursor(9, 40);
     tft.println(" RESET OR");
@@ -687,11 +690,11 @@ uint16_t WmcTft::getColor(color Clr)
     uint16_t ColorReturn;
     switch (Clr)
     {
-    case color_red: ColorReturn = ST7735_RED; break;
-    case color_green: ColorReturn = ST7735_GREEN; break;
-    case color_yellow: ColorReturn = ST7735_YELLOW; break;
-    case color_white: ColorReturn = ST7735_WHITE; break;
-    default: ColorReturn = ST7735_RED; break;
+    case color_red: ColorReturn = TFT_RED; break;
+    case color_green: ColorReturn = TFT_GREEN; break;
+    case color_yellow: ColorReturn = TFT_YELLOW; break;
+    case color_white: ColorReturn = TFT_WHITE; break;
+    default: ColorReturn = TFT_RED; break;
     }
 
     return (ColorReturn);
@@ -704,12 +707,12 @@ void WmcTft::ShowPomAddress(uint16_t Address, bool Init, color Clr)
     if (Init == true)
     {
         tft.setCursor(5, 20);
-        tft.setTextColor(ST7735_YELLOW);
+        tft.setTextColor(TFT_YELLOW);
         tft.setTextSize(1);
         tft.print("POM loc address");
     }
 
-    tft.fillRect(60, 30, 68, 30, ST7735_BLACK);
+    tft.fillRect(60, 30, 68, 30, TFT_BLACK);
     tft.setCursor(60, 30);
     tft.setTextColor(getColor(Clr));
     tft.setTextSize(3);
@@ -730,23 +733,23 @@ void WmcTft::ShowDccNumber(uint16_t CvNUmber, bool Init, bool PomActive)
         {
             tft.setCursor(5, 55);
         }
-        tft.setTextColor(ST7735_YELLOW);
+        tft.setTextColor(TFT_YELLOW);
         tft.setTextSize(1);
         tft.print("Cv number");
     }
 
     if (PomActive == false)
     {
-        tft.fillRect(60, 30, 68, 30, ST7735_BLACK);
+        tft.fillRect(60, 30, 68, 30, TFT_BLACK);
         tft.setCursor(60, 33);
     }
     else
     {
-        tft.fillRect(60, 65, 68, 30, ST7735_BLACK);
+        tft.fillRect(60, 65, 68, 30, TFT_BLACK);
         tft.setCursor(60, 65);
     }
 
-    tft.setTextColor(ST7735_GREEN);
+    tft.setTextColor(TFT_GREEN);
     tft.setTextSize(3);
     tft.print(CvNUmber);
 }
@@ -765,22 +768,22 @@ void WmcTft::ShowDccValue(uint16_t CvValue, bool Init, bool PomActive)
         {
             tft.setCursor(5, 90);
         }
-        tft.setTextColor(ST7735_YELLOW);
+        tft.setTextColor(TFT_YELLOW);
         tft.setTextSize(1);
         tft.print("CV value");
     }
 
     if (PomActive == false)
     {
-        tft.fillRect(60, 65, 65, 30, ST7735_BLACK);
+        tft.fillRect(60, 65, 65, 30, TFT_BLACK);
         tft.setCursor(60, 65);
     }
     else
     {
-        tft.fillRect(60, 100, 100, 30, ST7735_BLACK);
+        tft.fillRect(60, 100, 100, 30, TFT_BLACK);
         tft.setCursor(60, 100);
     }
-    tft.setTextColor(ST7735_GREEN);
+    tft.setTextColor(TFT_GREEN);
     tft.setTextSize(3);
     tft.print(CvValue);
 }
@@ -791,11 +794,11 @@ void WmcTft::ShowDccValueRemove(bool PomActive)
 {
     if (PomActive == false)
     {
-        tft.fillRect(5, 55, 122, 38, ST7735_BLACK);
+        tft.fillRect(5, 55, 122, 38, TFT_BLACK);
     }
     else
     {
-        tft.fillRect(5, 90, 122, 38, ST7735_BLACK);
+        tft.fillRect(5, 90, 122, 38, TFT_BLACK);
     }
 }
 
@@ -805,11 +808,11 @@ void WmcTft::ShowDccNumberRemove(bool PomActive)
 {
     if (PomActive == false)
     {
-        tft.fillRect(5, 20, 122, 38, ST7735_BLACK);
+        tft.fillRect(5, 20, 122, 38, TFT_BLACK);
     }
     else
     {
-        tft.fillRect(5, 55, 122, 38, ST7735_BLACK);
+        tft.fillRect(5, 55, 122, 38, TFT_BLACK);
     }
 }
 
@@ -818,15 +821,15 @@ void WmcTft::ShowDccNumberRemove(bool PomActive)
 void WmcTft::ShowButtonToPress(uint8_t Button)
 {
     tft.setCursor(0, 22);
-    tft.setTextColor(ST7735_GREEN);
+    tft.setTextColor(TFT_GREEN);
     tft.setTextSize(2);
     tft.println("   PRESS");
     tft.println("    AND ");
     tft.println("  RELEASE");
     tft.println("  BUTTON");
 
-    tft.fillRect(60, 100, 50, 15, ST7735_BLACK);
+    tft.fillRect(60, 100, 50, 15, TFT_BLACK);
     tft.setCursor(60, 100);
-    tft.setTextColor(ST7735_YELLOW);
+    tft.setTextColor(TFT_YELLOW);
     tft.print(Button);
 }
