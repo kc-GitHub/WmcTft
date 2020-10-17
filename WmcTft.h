@@ -272,11 +272,6 @@ public:
      */
     void ShowDccNumberRemove(bool PomActive);
 
-    /**
-     * Show button to be pressed.
-     */
-    void ShowButtonToPress(uint8_t Button);
-
 private:
     /**
      * Convert color enum to display value.
