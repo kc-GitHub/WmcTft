@@ -145,6 +145,20 @@ void WmcTft::ShowName(void)
 
 /***********************************************************************************************************************
  */
+void WmcTft::ShowWifiConfigMode()
+{
+	Init();
+	tft.setCursor(0, 25);
+	tft.setTextSize(2);
+	tft.setTextWrap(1);
+	tft.println(TXT_WIFI_CONFIG_MODE1);
+  tft.println(TXT_WIFI_CONFIG_MODE2);
+	tft.println("");
+//	tft.println(wifiManager->getConfigPortalSSID());
+}
+
+/***********************************************************************************************************************
+ */
 void WmcTft::Clear(void) { tft.fillScreen(TFT_BLACK); }
 
 /***********************************************************************************************************************
