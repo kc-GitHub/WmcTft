@@ -13,6 +13,18 @@
  **********************************************************************************************************************/
 #include <Arduino.h>
 
+#define LANG_EN                     0
+#define LANG_GER                    1
+#define LANG                        LANG_GER
+
+#if LANG == LANG_GER
+    #define TXT_WIFI_CONFIG_MODE1  "WiFi Config Mode ist"
+    #define TXT_WIFI_CONFIG_MODE2  "active."
+#else
+    #define TXT_WIFI_CONFIG_MODE1   "Der WiFi Config"
+    #define TXT_WIFI_CONFIG_MODE2   "Mode is active."
+#endif
+
 /***********************************************************************************************************************
  * T Y P E D E F S  /  E N U M
  **********************************************************************************************************************/
@@ -94,6 +106,8 @@ public:
      * Show info
      */
     void ShowName(void);
+
+    void ShowWifiConfigMode();
 
     /**
      * Clear the display.,
