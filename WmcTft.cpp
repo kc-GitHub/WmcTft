@@ -815,21 +815,3 @@ void WmcTft::ShowDccNumberRemove(bool PomActive)
         tft.fillRect(5, 55, 122, 38, TFT_BLACK);
     }
 }
-
-/***********************************************************************************************************************
- */
-void WmcTft::ShowButtonToPress(uint8_t Button)
-{
-    tft.setCursor(0, 22);
-    tft.setTextColor(TFT_GREEN);
-    tft.setTextSize(2);
-    tft.println("   PRESS");
-    tft.println("    AND ");
-    tft.println("  RELEASE");
-    tft.println("  BUTTON");
-
-    tft.fillRect(60, 100, 50, 15, TFT_BLACK);
-    tft.setCursor(60, 100);
-    tft.setTextColor(TFT_YELLOW);
-    tft.print(Button);
-}
