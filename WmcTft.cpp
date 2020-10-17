@@ -83,8 +83,6 @@ const unsigned char TurnoutForwardBitmap[] = { 0xff, 0xff, 0xff, 0xf0, 0xff, 0xf
 // These pins will also work for the 1.8" TFT shield
 TFT_eSPI tft = TFT_eSPI();  // Invoke library, pins defined in User_Setup.h
 
-#define GRAY 0xE73C
-
 /***********************************************************************************************************************
  */
 WmcTft::WmcTft() {}
@@ -303,7 +301,7 @@ void WmcTft::UpdateLocInfo(
         ShowLampStatus(locInfoRcvPtr->Light);
     }
 
-    for (Index = 0; Index < 5; Index++)
+    for (Index = 0; Index < MAX_FUNCTION_BUTTONS; Index++)
     {
         Function = assignedFunctions[Index];
         if ((updateAll == true)
@@ -504,41 +502,34 @@ void WmcTft::ShowLampStatus(locoLight Light)
     }
 }
 
-/***********************************************************************************************************************
+
+/**
+ * Paint function indicator boxes at bottom of display.
+ *
+ * @param[in] Functions:  function states of the loc
+ * @param[in] Function:   function number assigned to function location
+ * @param[in] Location:   location index (1 - 9), location 0 would be light and is ignored here
  */
 void WmcTft::ShowFunction(uint32_t Functions, uint8_t Function, uint8_t Location)
 {
-    tft.setTextSize(1);
-
     if (Function != 0)
     {
-        if ((Functions & (1 << (Function - 1))) == (uint32_t)((1 << (Function - 1))))
-        {
-            tft.drawBitmap(9 + (Location * 23), 100, FuntionBackgroundBitmap, 20, 20, TFT_BLACK, TFT_GREEN);
-        }
-        else
-        {
-            tft.drawBitmap(9 + (Location * 23), 100, FuntionBackgroundBitmap, 20, 20, TFT_BLACK, GRAY);
-        }
-
+        Location--;
+        tft.setTextSize(2);
         tft.setTextColor(TFT_BLACK);
-        if (Function < 10)
-        {
-            tft.setCursor(17 + (Location * 23), 107);
-        }
-        else if (Function < 20)
-        {
-            tft.setCursor(13 + (Location * 23), 107);
-        }
-        else
-        {
-            tft.setCursor(12 + (Location * 23), 107);
-        }
+
+        uint8_t boxSize = FUNCTION_BUTTON_SIZE;
+        uint8_t boxSpace = 1;
+        uint8_t marginLeft = 3;
+        uint8_t lineStart = TFT_HEIGHT - boxSize;
+        uint8_t lineStartText = lineStart + 5;
+
+        uint8_t colStartText = marginLeft + ((Function < 10) ? 8 : 1);
+        uint32_t backGround = ((Functions & (1 << (Function - 1))) == (uint32_t)((1 << (Function - 1)))) ? TFT_GREEN : TFT_WHITE;
+
+        tft.fillRect((Location * boxSize) + (boxSpace * Location) + marginLeft, lineStart, boxSize, boxSize, backGround);
+        tft.setCursor(colStartText + (Location * boxSize + boxSpace * Location), lineStartText);
         tft.print(Function);
-    }
-    else
-    {
-        tft.fillRect(9, 100, 21, 21, 0);
     }
 }
 
@@ -601,7 +592,7 @@ void WmcTft::FunctionAddSet()
     tft.setTextColor(TFT_BLACK);
     tft.setTextSize(1);
 
-    for (Index = 0; Index < 5; Index++)
+    for (Index = 0; Index < MAX_FUNCTION_BUTTONS; Index++)
     {
         tft.drawBitmap(9 + (Index * 23), 100, FuntionBackgroundBitmap, 20, 20, TFT_BLACK, TFT_GREEN);
         tft.setCursor(17 + (Index * 23), 107);
