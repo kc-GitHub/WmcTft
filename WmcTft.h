@@ -12,17 +12,68 @@
  * I N C L U D E S
  **********************************************************************************************************************/
 #include <Arduino.h>
+#include <TFT_eSPI.h>
+#include <User_Setup.h>
+
+#ifdef LOAD_GFXFF
+// Fonts
+#define MONO9     &FreeMono9pt7b
+#define MONO12    &FreeMono12pt7b
+#define MONO18    &FreeMono18pt7b
+#define MONO24    &FreeMono24pt7b
+
+#define MONO9_B   &FreeMonoBold9pt7b
+#define MONO12_B  &FreeMonoBold12pt7b
+#define MONO18_B  &FreeMonoBold18pt7b
+#define MONO24_B  &FreeMonoBold24pt7b
+
+#define SANS9C    &Open_Sans_Condensed_Light_9Bitmaps
+#define SANS9     &FreeSans9pt7b
+#define SANS12    &FreeSans12pt7b
+#define SANS18    &FreeSans18pt7b
+#define SANS24    &FreeSans24pt7b
+
+#define SANS9_B   &FreeSansBold9pt7b
+#define SANS12_B  &FreeSansBold12pt7b
+#define SANS18_B  &FreeSansBold18pt7b
+#define SANS24_B  &FreeSansBold24pt7b
+#endif
+
+#define STATUSBAR_HEIGHT  25
+#define STATUSBAR_MARGIN  5
+
+// aditional colors                 // http://www.rinkydinkelectronics.com/calc_rgb565.php
+#define TFT_DARKBLUE      0x0008
+#define TFT_RED2          0xFB2C
+
+#define COLOR_STATUSBAR   0x3186  // #333333
+
+
+
+#define FONT0     0
+#define FONT1     1
+#define FONT2     2
+#define FONT3     3
+#define FONT4     4
+#define FONT1_B   11
+#define FONT2_B   21
+#define FONT3_B   31
+#define FONT4_B   41
 
 #define LANG_EN                     0
 #define LANG_GER                    1
 #define LANG                        LANG_GER
 
 #if LANG == LANG_GER
-    #define TXT_WIFI_CONFIG_MODE1  "WiFi Config Mode ist"
-    #define TXT_WIFI_CONFIG_MODE2  "active."
+    #define TXT_WIFI_CONFIG_MODE1  "WiFi Config Mode"
+    #define TXT_WIFI_CONFIG_MODE2  "is active."
+    #define TXT_WIFI_CONFIG_MODE3  "Please connect"
+    #define TXT_WIFI_CONFIG_MODE4  "to WiFi SSID:"
 #else
-    #define TXT_WIFI_CONFIG_MODE1   "Der WiFi Config"
-    #define TXT_WIFI_CONFIG_MODE2   "Mode is active."
+    #define TXT_WIFI_CONFIG_MODE1  "Der WiFi Config"
+    #define TXT_WIFI_CONFIG_MODE2  "ist active."
+    #define TXT_WIFI_CONFIG_MODE3  "Bitte per WLAN mit"
+    #define TXT_WIFI_CONFIG_MODE4  "dieser SSID verbinden:"
 #endif
 
 /***********************************************************************************************************************
@@ -89,13 +140,14 @@ public:
         bool Occupied;
     };
 
-    /* Constructor */
-    WmcTft();
+    uint8_t runningWheel = 0;
 
     /**
      *  Init the display functions.
      */
     void Init(void);
+
+    void Grid(void);
 
     /**
      * Show version info.
@@ -149,7 +201,7 @@ public:
     /**
      * Show | or - as indicating waiting on something.
      */
-    void UpdateRunningWheel(uint8_t count);
+    void UpdateRunningWheel();
 
     /**
      * Shoe transmitted loc number count when transmitting loc database
@@ -169,12 +221,7 @@ public:
     /**
      * Display first menu.
      */
-    void ShowMenu1();
-
-    /**
-     * Display second menu.
-     */
-    void ShowMenu2(bool emergencyStop, bool clearScreen);
+    void ShowMenu(bool emergencyStop);
 
     /**
      * Display erase.
@@ -242,14 +289,12 @@ public:
     void FunctionAddUpdate(uint16_t function);
 
     /**
-     * Loc symbol forward.
+     * Show loc symbol
+     *
+     * @param[in] locSymbolColor
+     * @param[in] direction (1 = forward, 0 = backward
      */
-    void ShowLocSymbolFw(color locSymbolColor);
-
-    /**
-     * Loc symbol backward.
-     */
-    void ShowLocSymbolBw(color locSymbolColor);
+    void ShowLocSymbol(color locSymbolColor, uint8_t direction);
 
     /**
      * Update the function info in lower part of screen.
