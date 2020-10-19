@@ -39,16 +39,15 @@
 #define SANS24_B  &FreeSansBold24pt7b
 #endif
 
-#define STATUSBAR_HEIGHT  25
-#define STATUSBAR_MARGIN  5
+#define FUNCTION_BUTTON_SIZE  25
+#define STATUSBAR_HEIGHT      25
+#define STATUSBAR_MARGIN      5
 
 // aditional colors                 // http://www.rinkydinkelectronics.com/calc_rgb565.php
-#define TFT_DARKBLUE      0x0008
-#define TFT_RED2          0xFB2C
+#define TFT_DARKBLUE          0x0008
+#define TFT_RED2              0xFB2C
 
-#define COLOR_STATUSBAR   0x3186  // #333333
-
-
+#define COLOR_STATUSBAR       0x3186  // #333333
 
 #define FONT0     0
 #define FONT1     1
