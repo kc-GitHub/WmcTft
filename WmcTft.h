@@ -218,6 +218,11 @@ public:
     void UdpConnectFailed();
 
     /**
+     * Show a confirmation message.
+     */
+    void ShowConfirmation(uint8_t confirmationType);
+
+    /**
      * Display first menu.
      */
     void ShowMenu(bool emergencyStop);
@@ -225,7 +230,7 @@ public:
     /**
      * Display erase.
      */
-    void ShowErase();
+    void ShowErase(uint8_t eraseType);
 
     /**
      * Show initial turnout screen.

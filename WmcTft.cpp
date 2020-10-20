@@ -267,6 +267,27 @@ void WmcTft::UdpConnectFailed()
     drawText("(Z21) failed.", TFT_WIDTH/2, TFT_HEIGHT/2+30, MC_DATUM, TFT_RED, FONT2_B);
 }
 
+/**
+ * Show a confirmation message
+ */
+void WmcTft::ShowConfirmation(uint8_t confirmationType)
+{
+    String textLine1 = "";
+    if (confirmationType == 1) {
+        textLine1 = "The WiFi settings are";
+    } else if (confirmationType == 2) {
+        textLine1 = "All locomotives are";
+    } else if (confirmationType == 3) {
+        textLine1 = "All settings are";
+    }
+
+    Clear();
+    drawText("Confirmation:", TFT_WIDTH/2, TFT_HEIGHT/2-70, MC_DATUM, TFT_YELLOW, FONT1_B);
+    drawText(textLine1.c_str(), TFT_WIDTH/2, TFT_HEIGHT/2-30, MC_DATUM, TFT_YELLOW, FONT1);
+    drawText("deleted. Continue?", TFT_WIDTH/2, TFT_HEIGHT/2-5, MC_DATUM, TFT_YELLOW, FONT1);
+    drawText("OK (1)  -  Cancel (2)", TFT_WIDTH/2, TFT_HEIGHT/2+35, MC_DATUM, TFT_YELLOW, FONT1_B);
+}
+
 /***********************************************************************************************************************
  * ToDo
  */
@@ -274,36 +295,47 @@ void WmcTft::ShowMenu(bool emergencyStop)
 {
     Clear();
     UpdateStatus("Settings", true, WmcTft::color_green);
-    drawText("1  Add Loc",            0, 30,  TL_DATUM, TFT_GREEN, FONT1);
-    drawText("2  Change Loc",         0, 50,  TL_DATUM, TFT_GREEN, FONT1);
-    drawText("3  Delete Loc",         0, 70,  TL_DATUM, TFT_GREEN, FONT1);
-    drawText("4  CV Programming",     0, 90,  TL_DATUM, TFT_GREEN, FONT1);
-    drawText("5  POM Programming",    0, 110, TL_DATUM, TFT_GREEN, FONT1);
+    drawText("1  Add Loc",              0, 30,  TL_DATUM, TFT_GREEN, FONT1);
+    drawText("2  Change Loc",           0, 50,  TL_DATUM, TFT_GREEN, FONT1);
+    drawText("3  Delete Loc",           0, 70,  TL_DATUM, TFT_GREEN, FONT1);
+    drawText("4  CV Programming",       0, 90,  TL_DATUM, TFT_GREEN, FONT1);
+    drawText("5  POM Programming",      0, 110, TL_DATUM, TFT_GREEN, FONT1);
 
     if (emergencyStop == true) {
-        drawText("6  Emergency STOP", 0, 130, TL_DATUM, TFT_GREEN, FONT1);
+        drawText("6  Emergency STOP",   0, 130, TL_DATUM, TFT_GREEN, FONT1);
     } else {
-        drawText("6  STOP",           0, 130, TL_DATUM, TFT_GREEN, FONT1);
+        drawText("6  STOP",             0, 130, TL_DATUM, TFT_GREEN, FONT1);
     }
-    drawText("7  Transmit",           0, 150, TL_DATUM, TFT_GREEN, FONT1);
-    drawText("8  Delete Locs",        0, 170, TL_DATUM, TFT_GREEN, FONT1);
-    drawText("9  Delete ALL",         0, 190, TL_DATUM, TFT_GREEN, FONT1);
+    drawText("7  Transmit",             0, 150, TL_DATUM, TFT_GREEN, FONT1);
+    drawText("8  Delete Locs",          0, 170, TL_DATUM, TFT_GREEN, FONT1);
 
-    #if APP_CFG_UC == APP_CFG_UC_STM32
-        drawText("0  XPNET",          0, 210, TL_DATUM, TFT_GREEN, FONT1);
-    #endif
+#if APP_CFG_UC == APP_CFG_UC_STM32
+    drawText("9  XPNET",                0, 190, TL_DATUM, TFT_GREEN, FONT1);
+#else
+    drawText("9  Delete WiFi Settings", 0, 190, TL_DATUM, TFT_GREEN, FONT1);
+#endif
+
+    drawText("0  Delete ALL",           0, 210, TL_DATUM, TFT_GREEN, FONT1);
 }
 
 /***********************************************************************************************************************
  * ToDo
 */
-void WmcTft::ShowErase()
+void WmcTft::ShowErase(uint8_t eraseType)
 {
     Clear();
-    tft.setCursor(10, 50);
-    tft.setTextColor(TFT_GREEN);
-    tft.setFreeFont(SANS12);
-    tft.println(" ERASING");
+
+    String textLine1 = "Erasing ";
+    if (eraseType == 1) {
+        textLine1 += "WiFi settings";
+    } else if (eraseType == 2) {
+        textLine1 += "all locomotives";
+    } else if (eraseType == 2) {
+        textLine1 += "all settings";
+    }
+    textLine1 += " ...";
+
+    drawText(textLine1.c_str(), TFT_WIDTH/2, TFT_HEIGHT/2, MC_DATUM, TFT_YELLOW, FONT1);
 }
 
 /***********************************************************************************************************************
