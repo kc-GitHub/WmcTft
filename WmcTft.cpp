@@ -343,35 +343,16 @@ void WmcTft::ShowErase(uint8_t eraseType)
 */
 void WmcTft::ShowTurnoutScreen()
 {
-    UpdateStatus("TURNOUT", true, WmcTft::color_green);
-
-    tft.drawBitmap(85, 20, TurnoutBitmap, 28, 28, TFT_BLACK, TFT_WHITE);
+    UpdateStatus("Turnout", true, WmcTft::color_green);
+    ShowTurnoutSymbol(0);
 }
 
 /***********************************************************************************************************************
- * ToDo
  */
 void WmcTft::ShowTurnoutAddress(uint16_t address)
 {
-    tft.fillRect(10, 22, 70, 30, TFT_BLACK);
-    tft.setCursor(10, 22);
-    tft.setTextColor(TFT_GREEN);
-    tft.setFreeFont(SANS24);
-    tft.print(address);
-}
-
-/***********************************************************************************************************************
- * ToDo:
- */
-void WmcTft::ShowTurnoutDirection(uint8_t direction)
-{
-    switch (direction)
-    {
-    case 0: tft.drawBitmap(85, 20, TurnoutBitmap, 28, 28, TFT_BLACK, TFT_WHITE); break;
-    case 1: tft.drawBitmap(85, 20, TurnoutForwardBitmap, 28, 28, TFT_BLACK, TFT_WHITE); break;
-    case 2: tft.drawBitmap(85, 20, TurnoutLeftBitmap, 28, 28, TFT_BLACK, TFT_WHITE); break;
-    default: tft.drawBitmap(85, 20, TurnoutBitmap, 28, 28, TFT_BLACK, TFT_WHITE); break;
-    }
+    tft.fillRect(40, TFT_HEIGHT-85, 200, 35, TFT_BLACK);
+    drawText(String(address).c_str(), TFT_WIDTH/2, TFT_HEIGHT-80, TC_DATUM, TFT_GREEN, FONT3);
 }
 
 /***********************************************************************************************************************
@@ -518,6 +499,38 @@ void WmcTft::ShowLocSymbol(color locSymbolColor, uint8_t direction) {
     tft.drawBitmap((TFT_WIDTH-locWidth)/2, locTop, locoBW, locWidth, locHeight, TFT_BLACK, locColor);
 }
 
+void WmcTft::ShowTurnoutSymbol(uint8_t direction) {
+    uint8_t width = 20;
+    uint8_t width2 = 26;
+    uint8_t left = TFT_WIDTH/2;
+    uint8_t top = 40;  // 0
+    uint8_t height = 100;
+    uint8_t lineWidth = 3;
+
+    tft.fillRect(left-width2, top, left+width, height, TFT_BLACK);
+    for (uint8_t i = 0; i < lineWidth; i++) {
+        tft.drawRect(left+i,       top+i,    width-i*2,    height-i*2, TFT_WHITE);
+
+        tft.drawLine(left,          top+60-i, left-width2+i, top+10,   TFT_WHITE);
+        tft.drawLine(left-width2+i, top+10,   left-10,       top+i,      TFT_WHITE);
+        tft.drawLine(left-10,       top+i,    left,          top+20+i,   TFT_WHITE);
+    }
+
+    if (direction == 1) {
+        for (uint8_t i = 0; i < lineWidth; i++) {
+            tft.drawLine(left, top+20+i, left+width-1, top+60+i, TFT_WHITE);
+        }
+
+        tft.fillRect(left+lineWidth, top+60, width-lineWidth*2, height-60-lineWidth, TFT_GREEN);
+
+        tft.fillTriangle(left+lineWidth-1, top+60, left-width2+lineWidth, top+10,          left-10,              top+lineWidth-1, TFT_GREEN);
+        tft.fillTriangle(left+lineWidth-1, top+60, left-10,               top+lineWidth-1, left+width-lineWidth, top+60,          TFT_GREEN);
+
+    } else if (direction == 2) {
+        tft.fillRect(left+lineWidth, top+lineWidth,    width-lineWidth*2, height-lineWidth*2, TFT_GREEN);
+    }
+}
+
 /***********************************************************************************************************************
  * ToDo
  */
@@ -584,7 +597,7 @@ uint16_t WmcTft::getColor(color Clr)
     uint16_t ColorReturn;
     switch (Clr)
     {
-    case color_red: ColorReturn = TFT_RED; break;
+    case color_red: ColorReturn = 0xFC10; break;
     case color_green: ColorReturn = TFT_GREEN; break;
     case color_yellow: ColorReturn = TFT_YELLOW; break;
     case color_white: ColorReturn = TFT_WHITE; break;

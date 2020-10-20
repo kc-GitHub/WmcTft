@@ -45,7 +45,7 @@
 
 // aditional colors                 // http://www.rinkydinkelectronics.com/calc_rgb565.php
 #define TFT_DARKBLUE          0x0008
-#define TFT_RED2              0xFB2C
+#define TFT_RED2              0xFC10
 
 #define COLOR_STATUSBAR       0x3186  // #333333
 
@@ -243,11 +243,6 @@ public:
     void ShowTurnoutAddress(uint16_t address);
 
     /**
-     * Show turnout direction
-     */
-    void ShowTurnoutDirection(uint8_t direction);
-
-    /**
      * Show loc address.
      */
     void ShowlocAddress(uint16_t address, color textColor);
@@ -299,6 +294,8 @@ public:
      * @param[in] direction (1 = forward, 0 = backward
      */
     void ShowLocSymbol(color locSymbolColor, uint8_t direction);
+
+    void ShowTurnoutSymbol(uint8_t direction);
 
     /**
      * Update the function info in lower part of screen.
