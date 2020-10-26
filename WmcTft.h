@@ -59,20 +59,65 @@
 #define FONT3_B   31
 #define FONT4_B   41
 
-#define LANG_EN                     0
-#define LANG_GER                    1
-#define LANG                        LANG_GER
+#define LANG_EN                        0
+#define LANG_GER                       1
 
-#if LANG == LANG_GER
-    #define TXT_WIFI_CONFIG_MODE1  "WiFi Config Mode"
-    #define TXT_WIFI_CONFIG_MODE2  "is active."
-    #define TXT_WIFI_CONFIG_MODE3  "Please connect"
-    #define TXT_WIFI_CONFIG_MODE4  "to WiFi SSID:"
+#define LANG                           LANG_EN
+
+/**
+ * Text strings for LCD texts.
+ * Note: The order must be the same as in enum lcdTextStringIndex below.
+ */
+#if LANG == LANG_EN
+    PGM_P const lcdTextStrings[] PROGMEM = {
+        #if APP_CFG_UC == APP_CFG_UC_ESP8266
+            "WIFI",
+        #else
+            "XMC",
+        #endif
+        "MANUAL",
+        "CONTROL II",
+
+        "WiFi Config Mode",
+        "is active.",
+        "Please connect",
+        "to WiFi SSID:",
+
+        "Connection to",
+        "Controll Unit",
+        "(Z21) failed.",
+
+        "Connecting to WLAN",
+        "Connecting to Central",
+        "POWER ON",
+        "POWER OFF",
+        "Receiving",
+        "Sorting",
+        "Program mode",
+        "Turnout",
+        "Add Loc",
+        "Functions",
+        "Change Function",
+        "Delete",
+        "Send Loc data",
+        "Command line",
+        "CV Programming",
+        "POM Programming",
+        "Settings",
+        "WRITING CV",
+        "READING CV",
+
+        "Confirmation:",
+        "The WiFi settings are",
+        "All locomotives are",
+        "All settings are",
+        "deleted. Continue?",
+        "OK (1)  -  Cancel (2)",
+    };
 #else
-    #define TXT_WIFI_CONFIG_MODE1  "Der WiFi Config"
-    #define TXT_WIFI_CONFIG_MODE2  "ist active."
-    #define TXT_WIFI_CONFIG_MODE3  "Bitte per WLAN mit"
-    #define TXT_WIFI_CONFIG_MODE4  "dieser SSID verbinden:"
+    // ToDo: German translation
+    PGM_P const lcdTextStrings[] PROGMEM = {
+    }
 #endif
 
 /***********************************************************************************************************************
@@ -85,6 +130,52 @@
 class WmcTft
 {
 public:
+    /**
+     * Enum for lcd text strings. Note: The order must be the same as in lcdTextStrings defination.
+     */
+    enum lcdTextStringIndex
+    {
+        txtAppName_Line1,
+        txtAppName_Line2,
+        txtAppName_Line3,
+
+        txtWifi_configModeLine1,
+        txtWifi_configModeLine2,
+        txtWifi_configModeLine3,
+        txtWifi_configModeLine4,
+
+        txtZ21_connectFailedLine1,
+        txtZ21_connectFailedLine2,
+        txtZ21_connectFailedLine3,
+
+        txtStatus_wifiConnect,
+        txtStatus_z21Connect,
+        txtStatus_powerOn,
+        txtStatus_powerOff,
+        txtStatus_receiving,
+        txtStatus_sorting,
+        txtStatus_programMode,
+        txtStatus_turnout,
+        txtStatus_addLoc,
+        txtStatus_functions,
+        txtStatus_changeFunction,
+        txtStatus_statusDelete,
+        txtStatus_sendLocData,
+        txtStatus_commandLine,
+        txtStatus_cvProgramming,
+        txtStatus_pomProgramming,
+        txtStatus_settings,
+        txtStatus_writingCV,
+        txtStatus_readingCV,
+
+        tctConfirmation_line1,
+        tctConfirmation_line2_wifi,
+        tctConfirmation_line2_locs,
+        tctConfirmation_line2_settings,
+        tctConfirmation_line3,
+        tctConfirmation_line4,
+    };
+
     /**
      * Enum for text xolor.
      */
@@ -148,6 +239,10 @@ public:
 
     void Grid(void);
 
+    void drawTextMultiline(uint8_t textIndexFrom, uint8_t textIndexTo, uint8_t lineHeight, uint8_t posLeft, uint8_t posTop, uint8_t textDatum, uint16_t color, uint8_t font);
+
+    void drawText (const char* string, uint8_t x, uint8_t y, uint8_t textDatum, uint16_t color, uint8_t font);
+
     /**
      * Show version info.
      */
@@ -168,7 +263,7 @@ public:
     /**
      * Update the status left up in the sreen.
      */
-    void UpdateStatus(const char* StrPtr, bool clearRowFull, color textColor);
+    void UpdateStatus(lcdTextStringIndex index, bool clearRowFull, color textColor);
 
     /**
      * Show IP address where to WMC tries to conenct to.

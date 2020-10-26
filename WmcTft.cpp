@@ -27,10 +27,18 @@ void WmcTft::Init(void)
 #endif
 }
 
+void WmcTft::drawTextMultiline(uint8_t textIndexFrom, uint8_t textIndexTo, uint8_t lineHeight, uint8_t posLeft, uint8_t posTop, uint8_t textDatum, uint16_t color, uint8_t font) {
+    Clear();
+    for (uint8_t i = textIndexFrom; i <= textIndexTo; i++){
+        drawText(lcdTextStrings[i], posLeft, posTop, textDatum, color, font);
+        posTop += lineHeight;
+    }
+}
+
 /**
  * Wrapper to write text and set position, set text alignment, text color and font
  */
-void drawText (const char* string, int32_t x, int32_t y, uint8_t textDatum, uint16_t color, uint8_t font)
+void WmcTft::drawText (const char* string, uint8_t x, uint8_t y, uint8_t textDatum, uint16_t color, uint8_t font)
 {
     if (font == FONT0) {
         tft.setFreeFont(MONO9);
@@ -54,7 +62,7 @@ void drawText (const char* string, int32_t x, int32_t y, uint8_t textDatum, uint
 
     tft.setTextColor(color);
     tft.setTextDatum(textDatum);
-    tft.drawString(string, x, y);
+    tft.drawString(string, (uint32_t)x, (uint32_t)y);
 }
 
 void WmcTft::Grid() {
@@ -91,15 +99,7 @@ void WmcTft::ShowVersion(uint16_t SwMajor, uint8_t SwMinor, uint8_t SwPatch)
  */
 void WmcTft::ShowName(void)
 {
-    Clear();
-#if APP_CFG_UC == APP_CFG_UC_ESP8266
-    drawText("WIFI", TFT_WIDTH/2, TFT_HEIGHT/2-50, MC_DATUM, TFT_GREEN, FONT2_B);
-#else
-    drawText("XMC", TFT_WIDTH/2, TFT_HEIGHT/2-50, MC_DATUM, TFT_GREEN, FONT2_B);
-#endif
-
-    drawText("MANUAL", TFT_WIDTH/2, TFT_HEIGHT/2-20, MC_DATUM, TFT_GREEN, FONT2_B);
-    drawText("CONTROL", TFT_WIDTH/2, TFT_HEIGHT/2+10, MC_DATUM, TFT_GREEN, FONT2_B);
+    drawTextMultiline(txtAppName_Line1, txtAppName_Line3, 30, TFT_WIDTH/2, TFT_HEIGHT/2 - 50, MC_DATUM, TFT_GREEN, FONT2_B);
 }
 
 #if APP_CFG_UC == APP_CFG_UC_ESP8266
@@ -111,11 +111,9 @@ void WmcTft::ShowWifiConfigMode()
 	Init();
   String ssid = DEVICE_NAME_PREFIX + String(ESP.getChipId());
 
-  drawText(TXT_WIFI_CONFIG_MODE1, TFT_WIDTH/2, TFT_HEIGHT/2-70, MC_DATUM, TFT_YELLOW, FONT2_B);
-  drawText(TXT_WIFI_CONFIG_MODE2, TFT_WIDTH/2, TFT_HEIGHT/2-40, MC_DATUM, TFT_YELLOW, FONT2_B);
-  drawText(TXT_WIFI_CONFIG_MODE3, TFT_WIDTH/2, TFT_HEIGHT/2, MC_DATUM, TFT_YELLOW, FONT2);
-  drawText(TXT_WIFI_CONFIG_MODE4, TFT_WIDTH/2, TFT_HEIGHT/2+30, MC_DATUM, TFT_YELLOW, FONT2);
-  drawText(ssid.c_str(), TFT_WIDTH/2, TFT_HEIGHT/2+70, MC_DATUM, TFT_YELLOW, FONT2_B);
+  drawText(lcdTextStrings[txtWifi_configModeLine1], TFT_WIDTH/2, TFT_HEIGHT/2-70, MC_DATUM, TFT_YELLOW, FONT2_B);
+  drawTextMultiline(txtWifi_configModeLine2, txtWifi_configModeLine4, 30, TFT_WIDTH/2, TFT_HEIGHT/2-40, MC_DATUM, TFT_YELLOW, FONT2_B);
+  drawText(ssid.c_str(), TFT_WIDTH/2, TFT_HEIGHT/2+60, MC_DATUM, TFT_YELLOW, FONT2_B);
 }
 #endif
 
@@ -127,12 +125,12 @@ void WmcTft::Clear(void) { tft.fillScreen(TFT_BLACK); }
 /***********************************************************************************************************************
  * Update the top status bar
  */
-void WmcTft::UpdateStatus(const char* StrPtr, bool clearRowFull, color textColor)
+void WmcTft::UpdateStatus(lcdTextStringIndex index, bool clearRowFull, color textColor)
 {
     uint16_t Color;
     Color = getColor(textColor);
     tft.fillRect(0, 0, (clearRowFull ? TFT_WIDTH : TFT_WIDTH-65), STATUSBAR_HEIGHT, COLOR_STATUSBAR);
-    drawText(StrPtr, STATUSBAR_MARGIN, STATUSBAR_MARGIN, TL_DATUM, Color, FONT1);
+    drawText(lcdTextStrings[index], STATUSBAR_MARGIN, STATUSBAR_MARGIN, TL_DATUM, Color, FONT1);
 }
 
 /***********************************************************************************************************************
@@ -261,10 +259,7 @@ void WmcTft::UpdateTransmitCount(uint8_t count, uint8_t totalCount)
  */
 void WmcTft::UdpConnectFailed()
 {
-    Clear();
-    drawText("Connection to", TFT_WIDTH/2, TFT_HEIGHT/2-30, MC_DATUM, TFT_RED, FONT2_B);
-    drawText("Controll Unit", TFT_WIDTH/2, TFT_HEIGHT/2, MC_DATUM, TFT_RED, FONT2_B);
-    drawText("(Z21) failed.", TFT_WIDTH/2, TFT_HEIGHT/2+30, MC_DATUM, TFT_RED, FONT2_B);
+    drawTextMultiline(txtZ21_connectFailedLine1, txtZ21_connectFailedLine3, 30, TFT_WIDTH/2, TFT_HEIGHT/2-40, MC_DATUM, TFT_RED, FONT2_B);
 }
 
 /**
@@ -272,20 +267,10 @@ void WmcTft::UdpConnectFailed()
  */
 void WmcTft::ShowConfirmation(uint8_t confirmationType)
 {
-    String textLine1 = "";
-    if (confirmationType == 1) {
-        textLine1 = "The WiFi settings are";
-    } else if (confirmationType == 2) {
-        textLine1 = "All locomotives are";
-    } else if (confirmationType == 3) {
-        textLine1 = "All settings are";
-    }
+    drawTextMultiline(tctConfirmation_line3, tctConfirmation_line4, 40, TFT_WIDTH/2, TFT_HEIGHT/2+10, MC_DATUM, TFT_YELLOW, FONT2);
 
-    Clear();
-    drawText("Confirmation:", TFT_WIDTH/2, TFT_HEIGHT/2-70, MC_DATUM, TFT_YELLOW, FONT1_B);
-    drawText(textLine1.c_str(), TFT_WIDTH/2, TFT_HEIGHT/2-30, MC_DATUM, TFT_YELLOW, FONT1);
-    drawText("deleted. Continue?", TFT_WIDTH/2, TFT_HEIGHT/2-5, MC_DATUM, TFT_YELLOW, FONT1);
-    drawText("OK (1)  -  Cancel (2)", TFT_WIDTH/2, TFT_HEIGHT/2+35, MC_DATUM, TFT_YELLOW, FONT1_B);
+    drawText(lcdTextStrings[tctConfirmation_line1], TFT_WIDTH/2, TFT_HEIGHT/2 - 70, MC_DATUM, TFT_YELLOW, FONT2_B);
+    drawText(lcdTextStrings[tctConfirmation_line1 + confirmationType], TFT_WIDTH/2, TFT_HEIGHT/2 - 20, MC_DATUM, TFT_YELLOW, FONT2);
 }
 
 /***********************************************************************************************************************
@@ -294,7 +279,7 @@ void WmcTft::ShowConfirmation(uint8_t confirmationType)
 void WmcTft::ShowMenu(bool emergencyStop)
 {
     Clear();
-    UpdateStatus("Settings", true, WmcTft::color_green);
+    UpdateStatus(txtStatus_settings, true, WmcTft::color_green);
     drawText("1  Add Loc",              0, 30,  TL_DATUM, TFT_GREEN, FONT1);
     drawText("2  Change Loc",           0, 50,  TL_DATUM, TFT_GREEN, FONT1);
     drawText("3  Delete Loc",           0, 70,  TL_DATUM, TFT_GREEN, FONT1);
@@ -343,7 +328,7 @@ void WmcTft::ShowErase(uint8_t eraseType)
 */
 void WmcTft::ShowTurnoutScreen()
 {
-    UpdateStatus("Turnout", true, WmcTft::color_green);
+    UpdateStatus(txtStatus_turnout, true, WmcTft::color_green);
     ShowTurnoutSymbol(0);
 }
 
