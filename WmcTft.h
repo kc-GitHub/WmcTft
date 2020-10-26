@@ -133,6 +133,13 @@
         "Erasing WiFi settings ...",
         "Erasing all locomotives ...",
         "Erasing all settings ...",
+
+        "Reset or",
+        "power off and on",
+        "to continue",
+
+        "Power off",
+        "Please release key!",
     };
 #else
     // ToDo: German translation
@@ -210,6 +217,13 @@ public:
         txtEraseing_wifi,
         txtEraseing_locs,
         txtEraseing_settings,
+
+        txtComandline_line1,
+        txtComandline_line2,
+        txtComandline_line3,
+
+        txtPowerOff_line1,
+        txtPowerOff_line2,
     };
 
     /**
@@ -282,7 +296,7 @@ public:
     /**
      * Show version info.
      */
-    void ShowVersion(uint16_t SwMajor, uint8_t SwMinor, uint8_t SwPatch);
+    void ShowVersion(uint16_t SwMajor, uint8_t SwMinor, uint8_t SwPatch, const char *compileTime);
 
     /**
      * Show info
@@ -463,6 +477,8 @@ public:
      * Delete showing CV value.
      */
     void ShowDccNumberRemove(bool PomActive);
+
+    void ShowPowerOffMessage(void);
 
 private:
     /**

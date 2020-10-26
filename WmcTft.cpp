@@ -81,7 +81,7 @@ void WmcTft::Grid() {
 /***********************************************************************************************************************
  * Show version of firmware at startup screen
  */
-void WmcTft::ShowVersion(uint16_t SwMajor, uint8_t SwMinor, uint8_t SwPatch)
+void WmcTft::ShowVersion(uint16_t SwMajor, uint8_t SwMinor, uint8_t SwPatch, const char *compileTime)
 {
     char VersionStr[10];
 
@@ -95,6 +95,7 @@ void WmcTft::ShowVersion(uint16_t SwMajor, uint8_t SwMinor, uint8_t SwPatch)
     }
 
     drawText(VersionStr, TFT_WIDTH/2, TFT_HEIGHT/2+40, MC_DATUM, TFT_GREEN, FONT1);
+    drawText(compileTime, TFT_WIDTH/2, TFT_HEIGHT/2+70, MC_DATUM, TFT_GREEN, FONT1);
 }
 
 /***********************************************************************************************************************
@@ -134,6 +135,14 @@ void WmcTft::UpdateStatus(lcdTextStringIndex index, bool clearRowFull, color tex
     Color = getColor(textColor);
     tft.fillRect(0, 0, (clearRowFull ? TFT_WIDTH : TFT_WIDTH-65), STATUSBAR_HEIGHT, COLOR_STATUSBAR);
     drawText(lcdTextStrings[index], STATUSBAR_MARGIN, STATUSBAR_MARGIN, TL_DATUM, Color, FONT1);
+}
+
+void WmcTft::UpdateStatus(String txt, bool clearRowFull, color textColor)
+{
+    uint16_t Color;
+    Color = getColor(textColor);
+    tft.fillRect(0, 0, (clearRowFull ? TFT_WIDTH : TFT_WIDTH-65), STATUSBAR_HEIGHT, COLOR_STATUSBAR);
+    drawText(txt.c_str(), STATUSBAR_MARGIN, STATUSBAR_MARGIN, TL_DATUM, Color, FONT1);
 }
 
 /***********************************************************************************************************************
@@ -549,9 +558,7 @@ void WmcTft::UpdateFunction(uint8_t Index, uint8_t Function)
  */
 void WmcTft::CommandLine(void)
 {
-    drawText("Reset or",         TFT_WIDTH/2, TFT_HEIGHT/2-25, MC_DATUM, TFT_YELLOW, FONT2);
-    drawText("power off and on", TFT_WIDTH/2, TFT_HEIGHT/2, MC_DATUM, TFT_YELLOW, FONT2);
-    drawText("to continue",      TFT_WIDTH/2, TFT_HEIGHT/2+25, MC_DATUM, TFT_YELLOW, FONT2);
+    drawTextMultiline(txtComandline_line1, txtComandline_line3, TFT_WIDTH/2, TFT_HEIGHT/2-25, 30, MC_DATUM, TFT_YELLOW, FONT1, true);
 }
 
 /***********************************************************************************************************************
@@ -690,4 +697,18 @@ void WmcTft::ShowDccNumberRemove(bool PomActive)
     {
         tft.fillRect(5, 55, 122, 38, TFT_BLACK);
     }
+}
+
+void WmcTft::ShowPowerOffMessage(void) {
+    Clear();
+    drawText(lcdTextStrings[txtPowerOff_line1], TFT_WIDTH/2, 30, MC_DATUM, TFT_YELLOW, FONT2_B);
+    drawText(lcdTextStrings[txtPowerOff_line2], TFT_WIDTH/2, TFT_HEIGHT - 40, MC_DATUM, TFT_YELLOW, FONT2);
+
+    // draw powerOff symbol
+    uint8_t top = 80;
+    for (uint8_t r = 35; r <= 40; r++){
+        tft.drawCircle(TFT_WIDTH/2, top + 40, r, TFT_RED);
+    }
+    tft.fillRect(TFT_WIDTH/2 - 15, top , 30, 40, TFT_BLACK);
+    tft.fillRect(TFT_WIDTH/2 - 3, top - 5 , 6, 40, TFT_RED);
 }
