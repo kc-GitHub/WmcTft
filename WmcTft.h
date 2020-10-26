@@ -107,12 +107,32 @@
         "WRITING CV",
         "READING CV",
 
-        "Confirmation:",
+        "Confirmation",
         "The WiFi settings are",
         "All locomotives are",
         "All settings are",
         "deleted. Continue?",
-        "OK (1)  -  Cancel (2)",
+        "OK (9)  -  Cancel (0)",
+
+        "1  Add Loc",
+        "2  Change Loc",
+        "3  Delete Loc",
+        "4  CV Programming",
+        "5  POM Programming",
+        "6  STOP",
+        "6  Emergency STOP",
+        "7  Transmit",
+        "8  Delete Locs",
+        #if APP_CFG_UC == APP_CFG_UC_STM32
+            "9  Delete WiFi Settings",
+        #else
+            "9  XPNET",
+        #endif
+        "0  Delete ALL",
+
+        "Erasing WiFi settings ...",
+        "Erasing all locomotives ...",
+        "Erasing all settings ...",
     };
 #else
     // ToDo: German translation
@@ -168,12 +188,28 @@ public:
         txtStatus_writingCV,
         txtStatus_readingCV,
 
-        tctConfirmation_line1,
-        tctConfirmation_line2_wifi,
-        tctConfirmation_line2_locs,
-        tctConfirmation_line2_settings,
-        tctConfirmation_line3,
-        tctConfirmation_line4,
+        txtConfirmation_line1,
+        txtConfirmation_line2_wifi,
+        txtConfirmation_line2_locs,
+        txtConfirmation_line2_settings,
+        txtConfirmation_line3,
+        txtConfirmation_line4,
+
+        txtMenu_addLoc,
+        txtMenu_changeLoc,
+        txtMenu_deleteLoc,
+        txtMenu_cvPgm,
+        txtMenu_pomPgm,
+        txtMenu_stop,
+        txtMenu_stopEmergency,
+        txtMenu_transmit,
+        txtMenu_delAllLocs,
+        txtMenu_delWifi_XpNet,
+        txtMenu_delSettings,
+
+        txtEraseing_wifi,
+        txtEraseing_locs,
+        txtEraseing_settings,
     };
 
     /**
@@ -239,9 +275,9 @@ public:
 
     void Grid(void);
 
-    void drawTextMultiline(uint8_t textIndexFrom, uint8_t textIndexTo, uint8_t lineHeight, uint8_t posLeft, uint8_t posTop, uint8_t textDatum, uint16_t color, uint8_t font);
+    void drawTextMultiline(uint8_t textIndexFrom, uint8_t textIndexTo, uint8_t lineHeight, uint8_t posLeft, uint8_t posTop, uint8_t textDatum, uint16_t color, uint8_t font, bool clear);
 
-    void drawText (const char* string, uint8_t x, uint8_t y, uint8_t textDatum, uint16_t color, uint8_t font);
+    void drawText(const char* string, uint8_t x, uint8_t y, uint8_t textDatum, uint16_t color, uint8_t font);
 
     /**
      * Show version info.
@@ -264,6 +300,7 @@ public:
      * Update the status left up in the sreen.
      */
     void UpdateStatus(lcdTextStringIndex index, bool clearRowFull, color textColor);
+    void UpdateStatus(String index, bool clearRowFull, color textColor);
 
     /**
      * Show IP address where to WMC tries to conenct to.

@@ -27,8 +27,11 @@ void WmcTft::Init(void)
 #endif
 }
 
-void WmcTft::drawTextMultiline(uint8_t textIndexFrom, uint8_t textIndexTo, uint8_t lineHeight, uint8_t posLeft, uint8_t posTop, uint8_t textDatum, uint16_t color, uint8_t font) {
-    Clear();
+void WmcTft::drawTextMultiline(uint8_t textIndexFrom, uint8_t textIndexTo, uint8_t lineHeight, uint8_t posLeft, uint8_t posTop, uint8_t textDatum, uint16_t color, uint8_t font, bool clear) {
+    if (clear) {
+        Clear();
+    }
+
     for (uint8_t i = textIndexFrom; i <= textIndexTo; i++){
         drawText(lcdTextStrings[i], posLeft, posTop, textDatum, color, font);
         posTop += lineHeight;
@@ -38,7 +41,7 @@ void WmcTft::drawTextMultiline(uint8_t textIndexFrom, uint8_t textIndexTo, uint8
 /**
  * Wrapper to write text and set position, set text alignment, text color and font
  */
-void WmcTft::drawText (const char* string, uint8_t x, uint8_t y, uint8_t textDatum, uint16_t color, uint8_t font)
+void WmcTft::drawText(const char* string, uint8_t x, uint8_t y, uint8_t textDatum, uint16_t color, uint8_t font)
 {
     if (font == FONT0) {
         tft.setFreeFont(MONO9);
@@ -99,7 +102,7 @@ void WmcTft::ShowVersion(uint16_t SwMajor, uint8_t SwMinor, uint8_t SwPatch)
  */
 void WmcTft::ShowName(void)
 {
-    drawTextMultiline(txtAppName_Line1, txtAppName_Line3, 30, TFT_WIDTH/2, TFT_HEIGHT/2 - 50, MC_DATUM, TFT_GREEN, FONT2_B);
+    drawTextMultiline(txtAppName_Line1, txtAppName_Line3, 30, TFT_WIDTH/2, TFT_HEIGHT/2 - 50, MC_DATUM, TFT_GREEN, FONT2_B, true);
 }
 
 #if APP_CFG_UC == APP_CFG_UC_ESP8266
@@ -111,8 +114,8 @@ void WmcTft::ShowWifiConfigMode()
 	Init();
   String ssid = DEVICE_NAME_PREFIX + String(ESP.getChipId());
 
+  drawTextMultiline(txtWifi_configModeLine2, txtWifi_configModeLine4, 30, TFT_WIDTH/2, TFT_HEIGHT/2-40, MC_DATUM, TFT_YELLOW, FONT2_B, true);
   drawText(lcdTextStrings[txtWifi_configModeLine1], TFT_WIDTH/2, TFT_HEIGHT/2-70, MC_DATUM, TFT_YELLOW, FONT2_B);
-  drawTextMultiline(txtWifi_configModeLine2, txtWifi_configModeLine4, 30, TFT_WIDTH/2, TFT_HEIGHT/2-40, MC_DATUM, TFT_YELLOW, FONT2_B);
   drawText(ssid.c_str(), TFT_WIDTH/2, TFT_HEIGHT/2+60, MC_DATUM, TFT_YELLOW, FONT2_B);
 }
 #endif
@@ -259,7 +262,7 @@ void WmcTft::UpdateTransmitCount(uint8_t count, uint8_t totalCount)
  */
 void WmcTft::UdpConnectFailed()
 {
-    drawTextMultiline(txtZ21_connectFailedLine1, txtZ21_connectFailedLine3, 30, TFT_WIDTH/2, TFT_HEIGHT/2-40, MC_DATUM, TFT_RED, FONT2_B);
+    drawTextMultiline(txtZ21_connectFailedLine1, txtZ21_connectFailedLine3, 30, TFT_WIDTH/2, TFT_HEIGHT/2-40, MC_DATUM, TFT_RED, FONT2_B, true);
 }
 
 /**
@@ -267,10 +270,10 @@ void WmcTft::UdpConnectFailed()
  */
 void WmcTft::ShowConfirmation(uint8_t confirmationType)
 {
-    drawTextMultiline(tctConfirmation_line3, tctConfirmation_line4, 40, TFT_WIDTH/2, TFT_HEIGHT/2+10, MC_DATUM, TFT_YELLOW, FONT2);
+    drawTextMultiline(txtConfirmation_line3, txtConfirmation_line4, 40, TFT_WIDTH/2, TFT_HEIGHT/2, MC_DATUM, TFT_YELLOW, FONT2, true);
 
-    drawText(lcdTextStrings[tctConfirmation_line1], TFT_WIDTH/2, TFT_HEIGHT/2 - 70, MC_DATUM, TFT_YELLOW, FONT2_B);
-    drawText(lcdTextStrings[tctConfirmation_line1 + confirmationType], TFT_WIDTH/2, TFT_HEIGHT/2 - 20, MC_DATUM, TFT_YELLOW, FONT2);
+    drawText(lcdTextStrings[txtConfirmation_line1], TFT_WIDTH/2, TFT_HEIGHT/2 - 80, MC_DATUM, TFT_YELLOW, FONT2_B);
+    drawText(lcdTextStrings[txtConfirmation_line1 + confirmationType], TFT_WIDTH/2, TFT_HEIGHT/2 - 20, MC_DATUM, TFT_YELLOW, FONT2);
 }
 
 /***********************************************************************************************************************
@@ -278,29 +281,12 @@ void WmcTft::ShowConfirmation(uint8_t confirmationType)
  */
 void WmcTft::ShowMenu(bool emergencyStop)
 {
-    Clear();
+    drawTextMultiline(txtMenu_addLoc, txtMenu_pomPgm, 20, 0, 30, TL_DATUM, TFT_GREEN, FONT1, true);
     UpdateStatus(txtStatus_settings, true, WmcTft::color_green);
-    drawText("1  Add Loc",              0, 30,  TL_DATUM, TFT_GREEN, FONT1);
-    drawText("2  Change Loc",           0, 50,  TL_DATUM, TFT_GREEN, FONT1);
-    drawText("3  Delete Loc",           0, 70,  TL_DATUM, TFT_GREEN, FONT1);
-    drawText("4  CV Programming",       0, 90,  TL_DATUM, TFT_GREEN, FONT1);
-    drawText("5  POM Programming",      0, 110, TL_DATUM, TFT_GREEN, FONT1);
 
-    if (emergencyStop == true) {
-        drawText("6  Emergency STOP",   0, 130, TL_DATUM, TFT_GREEN, FONT1);
-    } else {
-        drawText("6  STOP",             0, 130, TL_DATUM, TFT_GREEN, FONT1);
-    }
-    drawText("7  Transmit",             0, 150, TL_DATUM, TFT_GREEN, FONT1);
-    drawText("8  Delete Locs",          0, 170, TL_DATUM, TFT_GREEN, FONT1);
+    drawText(lcdTextStrings[txtMenu_stop + (emergencyStop ? 1 : 0)], 0, 130, TL_DATUM, TFT_GREEN, FONT1);
 
-#if APP_CFG_UC == APP_CFG_UC_STM32
-    drawText("9  XPNET",                0, 190, TL_DATUM, TFT_GREEN, FONT1);
-#else
-    drawText("9  Delete WiFi Settings", 0, 190, TL_DATUM, TFT_GREEN, FONT1);
-#endif
-
-    drawText("0  Delete ALL",           0, 210, TL_DATUM, TFT_GREEN, FONT1);
+    drawTextMultiline(txtMenu_transmit, txtMenu_delSettings, 20, 0, 150, TL_DATUM, TFT_GREEN, FONT1, false);
 }
 
 /***********************************************************************************************************************
@@ -310,17 +296,7 @@ void WmcTft::ShowErase(uint8_t eraseType)
 {
     Clear();
 
-    String textLine1 = "Erasing ";
-    if (eraseType == 1) {
-        textLine1 += "WiFi settings";
-    } else if (eraseType == 2) {
-        textLine1 += "all locomotives";
-    } else if (eraseType == 2) {
-        textLine1 += "all settings";
-    }
-    textLine1 += " ...";
-
-    drawText(textLine1.c_str(), TFT_WIDTH/2, TFT_HEIGHT/2, MC_DATUM, TFT_YELLOW, FONT1);
+    drawText(lcdTextStrings[txtEraseing_wifi + eraseType], TFT_WIDTH/2, TFT_HEIGHT/2, MC_DATUM, TFT_YELLOW, FONT1);
 }
 
 /***********************************************************************************************************************
@@ -364,7 +340,11 @@ void WmcTft::ShowlocSpeed(uint8_t Speed)
  */
 void WmcTft::ShowLampStatus(locoLight Light)
 {
-    tft.drawBitmap(10, 155, bulbBitmapOn, 28, 28, TFT_BLACK, (Light == locoLightOn) ? TFT_WHITE : TFT_DARKGREY);
+    if (Light == locoLightOn) {
+        tft.drawBitmap(10, 145, bulbOn, 42, 44, TFT_BLACK, TFT_YELLOW);
+    } else {
+        tft.drawBitmap(10, 145, bulbOff, 42, 44, TFT_BLACK, TFT_DARKGREY);
+    }
 }
 
 /**
@@ -452,7 +432,7 @@ void WmcTft::FunctionAddSet()
         tft.setCursor(17 + (Index * 23), 107);
         tft.print(Index);
     }
-    tft.drawBitmap(80, 50, bulbBitmapOn, 28, 28, TFT_BLACK, TFT_WHITE);
+    ShowLampStatus(locoLightOn);
 }
 
 /***********************************************************************************************************************
@@ -538,8 +518,7 @@ void WmcTft::UpdateFunction(uint8_t Index, uint8_t Function)
 
     if ((Index == 0) && (Function == 0))
     {
-        tft.drawBitmap(80, 50, bulbBitmapOn, 28, 28, TFT_BLACK, TFT_WHITE);
-        tft.fillRect(9, 100, 21, 21, 0);
+        ShowLampStatus(locoLightOn);
     }
     else
     {
