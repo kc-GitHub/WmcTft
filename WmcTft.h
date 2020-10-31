@@ -83,10 +83,6 @@
         "Please connect",
         "to WiFi SSID:",
 
-        "Connection to",
-        "Controll Unit",
-        "(Z21) failed.",
-
         "Connecting to WLAN",
         "Connecting to Central",
         "POWER ON",
@@ -180,10 +176,6 @@ public:
         txtWifi_configModeLine2,
         txtWifi_configModeLine3,
         txtWifi_configModeLine4,
-
-        txtZ21_connectFailedLine1,
-        txtZ21_connectFailedLine2,
-        txtZ21_connectFailedLine3,
 
         txtStatus_wifiConnect,
         txtStatus_z21Connect,
@@ -335,14 +327,9 @@ public:
      */
     void UpdateStatus(lcdTextStringIndex index, bool clearRowFull, color textColor);
     void UpdateStatus(String index, bool clearRowFull, color textColor);
-
-    /**
-     * Show IP address where to WMC tries to conenct to.
-     */
-    void ShowIpAddressToConnectTo(const char* IpStr);
-
     void UpdateStatusBattery(String txt);
     void UpdateStatusWifi(sint8 rssiPercent);
+    void UpdateStatusZ21(uint8_t state);
     /**
      * Show the name is the network connecting to...
      */
@@ -364,11 +351,6 @@ public:
      */
     void UpdateLocInfo(
         locoInfo* locInfoRcvPtr, locoInfo* locInfoActPtr, uint8_t* assignedFunctions, char* LocName, bool updateAll);
-
-    /**
-     * Show | or - as indicating waiting on something.
-     */
-    void UpdateRunningWheel();
 
     /**
      * Shoe transmitted loc number count when transmitting loc database

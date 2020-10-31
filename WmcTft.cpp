@@ -145,14 +145,8 @@ void WmcTft::UpdateStatus(String txt, bool clearRowFull, color textColor)
     drawText(txt.c_str(), STATUSBAR_MARGIN, STATUSBAR_MARGIN, TL_DATUM, Color, FONT1);
 }
 
-/***********************************************************************************************************************
- * Show IP address of Z21 Central Station after WiFi Connect at second to status bar.
- */
-void WmcTft::ShowIpAddressToConnectTo(const char* IpStr)
 void WmcTft::UpdateStatusBattery(String txt)
 {
-    tft.fillRect(0, STATUSBAR_HEIGHT, TFT_WIDTH, STATUSBAR_HEIGHT, COLOR_STATUSBAR);
-    drawText(IpStr, TFT_WIDTH/2, STATUSBAR_HEIGHT + STATUSBAR_MARGIN, TC_DATUM, TFT_YELLOW, FONT1);
     tft.fillRect(TFT_WIDTH-65, 0, 65, STATUSBAR_HEIGHT, COLOR_STATUSBAR);
     tft.fillRect(TFT_WIDTH-9, 2, 4, 2, TFT_WHITE);
     tft.fillRect(TFT_WIDTH-12, 5, 10, 17, TFT_WHITE);
@@ -186,6 +180,20 @@ void WmcTft::UpdateStatusWifi(sint8 rssiPercent)
     }
     tft.drawLine(left+30, 0, left+30, STATUSBAR_HEIGHT, TFT_DARKGREY);
 }
+
+void WmcTft::UpdateStatusZ21(uint8_t state)
+{
+    uint8_t left = TFT_WIDTH-122;
+    if (state) {
+        tft.drawBitmap(left, 4, z21Icon, 22, 22, COLOR_STATUSBAR, TFT_WHITE);
+    } else {
+        tft.drawBitmap(left, 4, z21Icon, 22, 22, COLOR_STATUSBAR, TFT_DARKGREY);
+        for (uint8_t i = 0; i < 3; i++) {
+            tft.drawLine(left+2+i,  2, left+20+i, 22, TFT_RED);
+            tft.drawLine(left+2+i, 22, left+20+i,  2, TFT_RED);
+        }
+    }
+    tft.drawLine(left+30, 0, left+30, STATUSBAR_HEIGHT, TFT_DARKGREY);
 }
 
 /***********************************************************************************************************************
@@ -269,43 +277,12 @@ void WmcTft::UpdateLocInfo(locoInfo* locInfoRcvPtr, locoInfo* locInfoActPtr, uin
 }
 
 /***********************************************************************************************************************
- * Displays spinner while waiting for connection to the Z21 central unit.
- */
-void WmcTft::UpdateRunningWheel()
-{
-    WmcTft::runningWheel ++;
-    String w;
-
-    if (runningWheel == 1) {
-        w = "/";
-    } else if (runningWheel == 2) {
-        w = "-";
-    } else if (runningWheel == 3) {
-        w = "\\";
-    } else {
-        w = "| ";
-        runningWheel = 0;
-    }
-
-    tft.fillRect(TFT_WIDTH-20, 0, TFT_WIDTH, STATUSBAR_HEIGHT, COLOR_STATUSBAR);
-    drawText(w.c_str(), TFT_WIDTH-10, STATUSBAR_MARGIN, TC_DATUM, TFT_YELLOW, FONT0);
-}
-
-/***********************************************************************************************************************
  * ToDo
  */
 void WmcTft::UpdateTransmitCount(uint8_t count, uint8_t totalCount)
 {
     tft.fillRect(195, 5, 240, 25, TFT_YELLOW);
     drawText(String(count).c_str(), 195, 150, TL_DATUM, TFT_GREEN, FONT1);
-}
-
-/***********************************************************************************************************************
- * Display error message if connection to the Z21 Central Unit can not established.
- */
-void WmcTft::UdpConnectFailed()
-{
-    drawTextMultiline(txtZ21_connectFailedLine1, txtZ21_connectFailedLine3, 30, TFT_WIDTH/2, TFT_HEIGHT/2-40, MC_DATUM, TFT_RED, FONT2_B, true);
 }
 
 /**
