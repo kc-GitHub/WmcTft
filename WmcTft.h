@@ -321,6 +321,8 @@ public:
      */
     void ShowIpAddressToConnectTo(const char* IpStr);
 
+    void UpdateStatusBattery(String txt);
+    void UpdateStatusWifi(sint8 rssiPercent);
     /**
      * Show the name is the network connecting to...
      */

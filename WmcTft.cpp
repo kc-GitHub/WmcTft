@@ -133,7 +133,7 @@ void WmcTft::UpdateStatus(lcdTextStringIndex index, bool clearRowFull, color tex
 {
     uint16_t Color;
     Color = getColor(textColor);
-    tft.fillRect(0, 0, (clearRowFull ? TFT_WIDTH : TFT_WIDTH-65), STATUSBAR_HEIGHT, COLOR_STATUSBAR);
+    tft.fillRect(0, 0, (clearRowFull ? TFT_WIDTH-65 : TFT_WIDTH-65), STATUSBAR_HEIGHT, COLOR_STATUSBAR);
     drawText(lcdTextStrings[index], STATUSBAR_MARGIN, STATUSBAR_MARGIN, TL_DATUM, Color, FONT1);
 }
 
@@ -141,7 +141,7 @@ void WmcTft::UpdateStatus(String txt, bool clearRowFull, color textColor)
 {
     uint16_t Color;
     Color = getColor(textColor);
-    tft.fillRect(0, 0, (clearRowFull ? TFT_WIDTH : TFT_WIDTH-65), STATUSBAR_HEIGHT, COLOR_STATUSBAR);
+    tft.fillRect(0, 0, (clearRowFull ? TFT_WIDTH-65 : TFT_WIDTH-65), STATUSBAR_HEIGHT, COLOR_STATUSBAR);
     drawText(txt.c_str(), STATUSBAR_MARGIN, STATUSBAR_MARGIN, TL_DATUM, Color, FONT1);
 }
 
@@ -149,9 +149,43 @@ void WmcTft::UpdateStatus(String txt, bool clearRowFull, color textColor)
  * Show IP address of Z21 Central Station after WiFi Connect at second to status bar.
  */
 void WmcTft::ShowIpAddressToConnectTo(const char* IpStr)
+void WmcTft::UpdateStatusBattery(String txt)
 {
     tft.fillRect(0, STATUSBAR_HEIGHT, TFT_WIDTH, STATUSBAR_HEIGHT, COLOR_STATUSBAR);
     drawText(IpStr, TFT_WIDTH/2, STATUSBAR_HEIGHT + STATUSBAR_MARGIN, TC_DATUM, TFT_YELLOW, FONT1);
+    tft.fillRect(TFT_WIDTH-65, 0, 65, STATUSBAR_HEIGHT, COLOR_STATUSBAR);
+    tft.fillRect(TFT_WIDTH-9, 2, 4, 2, TFT_WHITE);
+    tft.fillRect(TFT_WIDTH-12, 5, 10, 17, TFT_WHITE);
+
+    drawText(txt.c_str(), TFT_WIDTH-18, STATUSBAR_MARGIN, TR_DATUM, TFT_WHITE, FONT1);
+}
+
+void WmcTft::UpdateStatusWifi(sint8 rssiPercent)
+{
+    uint8_t left = TFT_WIDTH-88;
+    tft.drawBitmap(left, 1, wifi, 24, 24, COLOR_STATUSBAR, TFT_DARKGREY);
+    if (rssiPercent >=0) {
+        if (rssiPercent > 85) {
+            tft.drawBitmap(left, 1, wifi_99, 24, 9, COLOR_STATUSBAR, TFT_WHITE);
+        }
+        if (rssiPercent > 55) {
+            tft.drawBitmap(left+2, 8, wifi_66, 20, 7, COLOR_STATUSBAR, TFT_WHITE);
+        }
+        if (rssiPercent > 25) {
+            tft.drawBitmap(left+6, 14, wifi_33, 12, 5, COLOR_STATUSBAR, TFT_WHITE);
+        }
+        if (rssiPercent > 5) {
+            tft.drawBitmap(left+10, 21, wifi_0, 4, 4, COLOR_STATUSBAR, TFT_WHITE);
+        }
+    } else {
+        // WiFi not connected
+        for (uint8_t i = 0; i < 3; i++) {
+            tft.drawLine(left+2+i,  2, left+20+i, 22, TFT_RED);
+            tft.drawLine(left+2+i, 22, left+20+i,  2, TFT_RED);
+        }
+    }
+    tft.drawLine(left+30, 0, left+30, STATUSBAR_HEIGHT, TFT_DARKGREY);
+}
 }
 
 /***********************************************************************************************************************
