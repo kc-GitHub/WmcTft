@@ -746,3 +746,35 @@ void WmcTft::ShowPowerOffMessage(void) {
     tft.fillRect(TFT_WIDTH/2 - 15, top , 30, 40, TFT_BLACK);
     tft.fillRect(TFT_WIDTH/2 - 3, top - 5 , 6, 40, TFT_RED);
 }
+
+void WmcTft::ShowFirmwareUpdateMessage(uint8_t updateState, uint8_t progress) {
+    if (updateState == 0) {
+        Clear();
+        drawText(lcdTextStrings[txtOtaUpdate_line1], TFT_WIDTH/2, 30, MC_DATUM, TFT_YELLOW, FONT2_B);
+
+        // draw uppdate symbol
+        uint8_t top = 80;
+        for (uint8_t r = 35; r <= 45; r++){
+            tft.drawCircle(TFT_WIDTH/2, top + 40, r, TFT_GREEN);
+        }
+        tft.fillRect(TFT_WIDTH/2, top + 45 , 60, 55, TFT_BLACK);
+        tft.fillTriangle(TFT_WIDTH/2, top + 65, TFT_WIDTH/2, top + 95, TFT_WIDTH/2+25, top + 80, TFT_GREEN);
+    }
+
+    tft.fillRect(0, TFT_HEIGHT - 50 , TFT_WIDTH, 40, TFT_BLACK);
+
+    if (updateState == 1) {
+        String txtProgress = lcdTextStrings[txtOtaUpdate_line2];
+        txtProgress += " " + String(progress) + " %";
+        drawText(txtProgress.c_str(), TFT_WIDTH/2, TFT_HEIGHT - 40, MC_DATUM, TFT_YELLOW, FONT2);
+
+    } else if (updateState == 2) {
+        drawText(lcdTextStrings[txtOtaUpdate_line3], TFT_WIDTH/2, TFT_HEIGHT - 40, MC_DATUM, TFT_YELLOW, FONT1);
+
+    } else if (updateState > 2) {
+        // process update errors
+        String txtError = lcdTextStrings[txtOtaUpdate_Error];
+        txtError += lcdTextStrings[txtOtaUpdate_Error0 + updateState];
+        drawText(lcdTextStrings[txtOtaUpdate_line3], TFT_WIDTH/2, TFT_HEIGHT - 40, MC_DATUM, TFT_RED, FONT1);
+    }
+}

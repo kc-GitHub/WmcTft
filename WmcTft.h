@@ -140,7 +140,17 @@
 
         "Power off",
         "Please release key!",
-    };
+
+        "Firmware update",
+        "Progress:",
+        "Waiting for completion ...",
+        "Error: ",
+        "Auth Failed",
+        "Begin Failed",
+        "Connect Failed",
+        "Receive Failed",
+        "End Failed",
+};
 #else
     // ToDo: German translation
     PGM_P const lcdTextStrings[] PROGMEM = {
@@ -224,6 +234,16 @@ public:
 
         txtPowerOff_line1,
         txtPowerOff_line2,
+
+        txtOtaUpdate_line1,
+        txtOtaUpdate_line2,
+        txtOtaUpdate_line3,
+        txtOtaUpdate_Error,
+        txtOtaUpdate_Error0,
+        txtOtaUpdate_Error1,
+        txtOtaUpdate_Error2,
+        txtOtaUpdate_Error3,
+        txtOtaUpdate_Error4,
     };
 
     /**
@@ -481,6 +501,8 @@ public:
     void ShowDccNumberRemove(bool PomActive);
 
     void ShowPowerOffMessage(void);
+
+    void ShowFirmwareUpdateMessage(uint8_t updateState, uint8_t progress);
 
 private:
     /**
