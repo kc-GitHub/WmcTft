@@ -525,6 +525,9 @@ void WmcTft::ShowTurnoutSymbol(uint8_t direction) {
     }
 
     if (direction == 1) {
+        tft.fillRect(left+lineWidth, top+lineWidth,    width-lineWidth*2, height-lineWidth*2, TFT_GREEN);
+
+    } else if (direction == 2) {
         for (uint8_t i = 0; i < lineWidth; i++) {
             tft.drawLine(left, top+20+i, left+width-1, top+60+i, TFT_WHITE);
         }
@@ -533,9 +536,6 @@ void WmcTft::ShowTurnoutSymbol(uint8_t direction) {
 
         tft.fillTriangle(left+lineWidth-1, top+60, left-width2+lineWidth, top+10,          left-10,              top+lineWidth-1, TFT_GREEN);
         tft.fillTriangle(left+lineWidth-1, top+60, left-10,               top+lineWidth-1, left+width-lineWidth, top+60,          TFT_GREEN);
-
-    } else if (direction == 2) {
-        tft.fillRect(left+lineWidth, top+lineWidth,    width-lineWidth*2, height-lineWidth*2, TFT_GREEN);
     }
 }
 
