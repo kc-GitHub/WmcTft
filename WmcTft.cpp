@@ -219,7 +219,15 @@ void WmcTft::UpdateSelectedAndNumberOfLocs(uint8_t actualLocIndex, uint8_t Numbe
 void WmcTft::UpdateStatusPower(uint8_t state)
 {
     tft.fillRect(0, 0, STATUSBAR_MARGIN*2+31, STATUSBAR_HEIGHT, COLOR_STATUSBAR);
-    tft.drawBitmap(STATUSBAR_MARGIN, 2, powerState, 31, 22, COLOR_STATUSBAR, (state ? TFT_GREEN : TFT_RED));
+
+    uint16_t color = TFT_RED;
+    if (state == 1) {
+        color = TFT_GREEN;
+    } else if (state == 2) {
+        color = TFT_YELLOW;
+    }
+
+    tft.drawBitmap(STATUSBAR_MARGIN, 2, powerState, 31, 22, COLOR_STATUSBAR, color);
     tft.drawLine(STATUSBAR_MARGIN*2+31, 0, STATUSBAR_MARGIN*2+31, STATUSBAR_HEIGHT-1, TFT_DARKGREY);
 }
 
