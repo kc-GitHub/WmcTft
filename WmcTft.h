@@ -85,8 +85,6 @@
 
         "Connecting to WLAN",
         "Connecting to Central",
-        "POWER ON",
-        "POWER OFF",
         "Receiving",
         "Sorting",
         "Program mode",
@@ -97,11 +95,11 @@
         "Delete",
         "Send Loc data",
         "Command line",
-        "CV Programming",
-        "POM Programming",
+        "CV Pgm",
+        "POM Pgm",
         "Settings",
-        "WRITING CV",
-        "READING CV",
+        "Writing CV",
+        "Reading CV",
 
         "Confirmation",
         "The WiFi settings are",
@@ -179,8 +177,6 @@ public:
 
         txtStatus_wifiConnect,
         txtStatus_z21Connect,
-        txtStatus_powerOn,
-        txtStatus_powerOff,
         txtStatus_receiving,
         txtStatus_sorting,
         txtStatus_programMode,
@@ -320,7 +316,7 @@ public:
     /**
      * Clear the display.,
      */
-    void Clear();
+    void Clear(uint8_t withStatusBar);
 
     /**
      * Update the status left up in the sreen.
@@ -328,8 +324,11 @@ public:
     void UpdateStatus(lcdTextStringIndex index, bool clearRowFull, color textColor);
     void UpdateStatus(String index, bool clearRowFull, color textColor);
     void UpdateStatusBattery(String txt);
+
+    void drawStatusDisabled(uint8_t left);
     void UpdateStatusWifi(sint8 rssiPercent);
     void UpdateStatusZ21(uint8_t state);
+    void UpdateStatusPower(uint8_t state);
     /**
      * Show the name is the network connecting to...
      */

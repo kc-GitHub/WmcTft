@@ -18,7 +18,7 @@ void WmcTft::Init(void)
 {
 	// initialize TFT display
 	tft.init();
-	Clear();
+	Clear(true);
 	tft.setRotation(2);
 
     tft.setTextWrap(false);
@@ -29,7 +29,7 @@ void WmcTft::Init(void)
 
 void WmcTft::drawTextMultiline(uint8_t textIndexFrom, uint8_t textIndexTo, uint8_t lineHeight, uint8_t posLeft, uint8_t posTop, uint8_t textDatum, uint16_t color, uint8_t font, bool clear) {
     if (clear) {
-        Clear();
+        Clear(true);
     }
 
     for (uint8_t i = textIndexFrom; i <= textIndexTo; i++){
@@ -124,7 +124,9 @@ void WmcTft::ShowWifiConfigMode()
 /***********************************************************************************************************************
  * Clear the whole screen
  */
-void WmcTft::Clear(void) { tft.fillScreen(TFT_BLACK); }
+void WmcTft::Clear(uint8_t withStatusBar) {
+    tft.fillRect(0, (withStatusBar ? 0 : STATUSBAR_HEIGHT+1), TFT_WIDTH, TFT_HEIGHT, TFT_BLACK);
+}
 
 /***********************************************************************************************************************
  * Update the top status bar
@@ -133,7 +135,7 @@ void WmcTft::UpdateStatus(lcdTextStringIndex index, bool clearRowFull, color tex
 {
     uint16_t Color;
     Color = getColor(textColor);
-    tft.fillRect(0, 0, (clearRowFull ? TFT_WIDTH-65 : TFT_WIDTH-65), STATUSBAR_HEIGHT, COLOR_STATUSBAR);
+    tft.fillRect(0, 0, (clearRowFull ? TFT_WIDTH : TFT_WIDTH-125), STATUSBAR_HEIGHT, COLOR_STATUSBAR);
     drawText(lcdTextStrings[index], STATUSBAR_MARGIN, STATUSBAR_MARGIN, TL_DATUM, Color, FONT1);
 }
 
@@ -141,7 +143,7 @@ void WmcTft::UpdateStatus(String txt, bool clearRowFull, color textColor)
 {
     uint16_t Color;
     Color = getColor(textColor);
-    tft.fillRect(0, 0, (clearRowFull ? TFT_WIDTH-65 : TFT_WIDTH-65), STATUSBAR_HEIGHT, COLOR_STATUSBAR);
+    tft.fillRect(0, 0, (clearRowFull ? TFT_WIDTH : TFT_WIDTH-125), STATUSBAR_HEIGHT, COLOR_STATUSBAR);
     drawText(txt.c_str(), STATUSBAR_MARGIN, STATUSBAR_MARGIN, TL_DATUM, Color, FONT1);
 }
 
@@ -154,13 +156,20 @@ void WmcTft::UpdateStatusBattery(String txt)
     drawText(txt.c_str(), TFT_WIDTH-18, STATUSBAR_MARGIN, TR_DATUM, TFT_WHITE, FONT1);
 }
 
+void WmcTft::drawStatusDisabled(uint8_t left) {
+    for (uint8_t i = 0; i < 3; i++) {
+        tft.drawLine(left+2+i,  2, left+20+i, 22, TFT_RED);
+        tft.drawLine(left+2+i, 22, left+20+i,  2, TFT_RED);
+    }
+}
+
 void WmcTft::UpdateStatusWifi(sint8 rssiPercent)
 {
     uint8_t left = TFT_WIDTH-88;
     tft.drawBitmap(left, 1, wifi, 24, 24, COLOR_STATUSBAR, TFT_DARKGREY);
     if (rssiPercent >=0) {
         if (rssiPercent > 85) {
-            tft.drawBitmap(left, 1, wifi_99, 24, 9, COLOR_STATUSBAR, TFT_WHITE);
+            tft.drawBitmap(left, 1, wifi_100, 24, 8, COLOR_STATUSBAR, TFT_WHITE);
         }
         if (rssiPercent > 55) {
             tft.drawBitmap(left+2, 8, wifi_66, 20, 7, COLOR_STATUSBAR, TFT_WHITE);
@@ -173,27 +182,45 @@ void WmcTft::UpdateStatusWifi(sint8 rssiPercent)
         }
     } else {
         // WiFi not connected
-        for (uint8_t i = 0; i < 3; i++) {
-            tft.drawLine(left+2+i,  2, left+20+i, 22, TFT_RED);
-            tft.drawLine(left+2+i, 22, left+20+i,  2, TFT_RED);
-        }
+        drawStatusDisabled(left);
     }
-    tft.drawLine(left+30, 0, left+30, STATUSBAR_HEIGHT, TFT_DARKGREY);
+    tft.drawLine(left+30, 0, left+30, STATUSBAR_HEIGHT-1, TFT_DARKGREY);
 }
 
 void WmcTft::UpdateStatusZ21(uint8_t state)
 {
-    uint8_t left = TFT_WIDTH-122;
+    uint8_t left = TFT_WIDTH-125;
+    tft.fillRect(left-13, 0, 50, STATUSBAR_HEIGHT, COLOR_STATUSBAR);
+    tft.drawLine(left-8, 0, left-8, STATUSBAR_HEIGHT-1, TFT_DARKGREY);
+
     if (state) {
-        tft.drawBitmap(left, 4, z21Icon, 22, 22, COLOR_STATUSBAR, TFT_WHITE);
+        tft.drawBitmap(left, 3, z21Icon, 22, 22, COLOR_STATUSBAR, TFT_WHITE);
     } else {
-        tft.drawBitmap(left, 4, z21Icon, 22, 22, COLOR_STATUSBAR, TFT_DARKGREY);
-        for (uint8_t i = 0; i < 3; i++) {
-            tft.drawLine(left+2+i,  2, left+20+i, 22, TFT_RED);
-            tft.drawLine(left+2+i, 22, left+20+i,  2, TFT_RED);
-        }
+        tft.drawBitmap(left, 3, z21Icon, 22, 22, COLOR_STATUSBAR, TFT_DARKGREY);
+        drawStatusDisabled(left);
     }
-    tft.drawLine(left+30, 0, left+30, STATUSBAR_HEIGHT, TFT_DARKGREY);
+    tft.drawLine(left+30, 0, left+30, STATUSBAR_HEIGHT-1, TFT_DARKGREY);
+}
+
+/***********************************************************************************************************************
+ * Display number of loc in top stytus bar (<currentLocIndex>/<maxLocCount>)
+ * Sample: (1/23)
+ */
+void WmcTft::UpdateSelectedAndNumberOfLocs(uint8_t actualLocIndex, uint8_t NumberOfLocs)
+{
+    uint8_t left = 42;
+    tft.fillRect(left, 0, 61, STATUSBAR_HEIGHT, COLOR_STATUSBAR);
+
+    char buffer[9];
+    snprintf(buffer, sizeof(buffer), "%u/%u", actualLocIndex, NumberOfLocs);
+    drawText(buffer, left+60, STATUSBAR_MARGIN, TR_DATUM, TFT_WHITE, FONT1);
+}
+
+void WmcTft::UpdateStatusPower(uint8_t state)
+{
+    tft.fillRect(0, 0, STATUSBAR_MARGIN*2+31, STATUSBAR_HEIGHT, COLOR_STATUSBAR);
+    tft.drawBitmap(STATUSBAR_MARGIN, 2, powerState, 31, 22, COLOR_STATUSBAR, (state ? TFT_GREEN : TFT_RED));
+    tft.drawLine(STATUSBAR_MARGIN*2+31, 0, STATUSBAR_MARGIN*2+31, STATUSBAR_HEIGHT-1, TFT_DARKGREY);
 }
 
 /***********************************************************************************************************************
@@ -203,19 +230,6 @@ void WmcTft::ShowNetworkName(const char* StrPtr)
 {
     tft.fillRect(0, STATUSBAR_HEIGHT, TFT_WIDTH, STATUSBAR_HEIGHT, COLOR_STATUSBAR);
     drawText(StrPtr, TFT_WIDTH/2, STATUSBAR_HEIGHT + STATUSBAR_MARGIN, TC_DATUM, TFT_YELLOW, FONT1);
-}
-
-/***********************************************************************************************************************
- * Display number of loc in top stytus bar (<currentLocIndex>/<maxLocCount>)
- * Sample: (1/23)
- */
-void WmcTft::UpdateSelectedAndNumberOfLocs(uint8_t actualLocIndex, uint8_t NumberOfLocs)
-{
-    char buffer[9];
-    tft.fillRect(176, 0, 128, STATUSBAR_HEIGHT, COLOR_STATUSBAR);
-
-    snprintf(buffer, sizeof(buffer), "(%u/%u)", actualLocIndex, NumberOfLocs);
-    drawText(String(buffer).c_str(), TFT_WIDTH-STATUSBAR_MARGIN, STATUSBAR_MARGIN, TR_DATUM, TFT_WHITE, FONT1);
 }
 
 /***********************************************************************************************************************
@@ -314,7 +328,7 @@ void WmcTft::ShowMenu(bool emergencyStop)
 */
 void WmcTft::ShowErase(uint8_t eraseType)
 {
-    Clear();
+    Clear(true);
 
     drawText(lcdTextStrings[txtEraseing_wifi + eraseType], TFT_WIDTH/2, TFT_HEIGHT/2, MC_DATUM, TFT_YELLOW, FONT1);
 }
@@ -324,6 +338,7 @@ void WmcTft::ShowErase(uint8_t eraseType)
 */
 void WmcTft::ShowTurnoutScreen()
 {
+    Clear(false);
     UpdateStatus(txtStatus_turnout, true, WmcTft::color_green);
     ShowTurnoutSymbol(0);
 }
@@ -711,7 +726,7 @@ void WmcTft::ShowDccNumberRemove(bool PomActive)
 }
 
 void WmcTft::ShowPowerOffMessage(void) {
-    Clear();
+    Clear(true);
     drawText(lcdTextStrings[txtPowerOff_line1], TFT_WIDTH/2, 30, MC_DATUM, TFT_YELLOW, FONT2_B);
     drawText(lcdTextStrings[txtPowerOff_line2], TFT_WIDTH/2, TFT_HEIGHT - 40, MC_DATUM, TFT_YELLOW, FONT2);
 
@@ -726,7 +741,7 @@ void WmcTft::ShowPowerOffMessage(void) {
 
 void WmcTft::ShowFirmwareUpdateMessage(uint8_t updateState, uint8_t progress) {
     if (updateState == 0) {
-        Clear();
+        Clear(true);
         drawText(lcdTextStrings[txtOtaUpdate_line1], TFT_WIDTH/2, 30, MC_DATUM, TFT_YELLOW, FONT2_B);
 
         // draw uppdate symbol
