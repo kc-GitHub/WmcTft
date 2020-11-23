@@ -25,6 +25,11 @@ void WmcTft::Init(void)
 #if APP_CFG_UC == APP_CFG_UC_STM32
     ShowName();
 #endif
+
+    menuItemStart = 0;
+    menuItemStartOld = 0;
+    menuSelected = 0;
+    menuSelectedOld = 0;
 }
 
 void WmcTft::drawTextMultiline(uint8_t textIndexFrom, uint8_t textIndexTo, uint8_t lineHeight, uint8_t posLeft, uint8_t posTop, uint8_t textDatum, uint16_t color, uint8_t font, bool clear) {
@@ -321,15 +326,60 @@ void WmcTft::ShowConfirmation(uint8_t confirmationType)
 /***********************************************************************************************************************
  * ToDo
  */
-void WmcTft::ShowMenu(bool emergencyStop)
+void WmcTft::ShowMenu(bool emergencyStop, uint8_t menuSelected, uint8_t menuSelectedOld, uint8_t menuItemStart, uint8_t m_menuItemStartOld, uint8_t clear)
 {
-    drawTextMultiline(txtMenu_addLoc, txtMenu_pomPgm, 20, 0, 30, TL_DATUM, TFT_GREEN, FONT1, true);
-    UpdateStatus(txtStatus_settings, true, WmcTft::color_green);
+    uint8_t itemHeight = 21;
+    uint8_t posTop = 30;
 
-    drawText(lcdTextStrings[txtMenu_stop + (emergencyStop ? 1 : 0)], 0, 130, TL_DATUM, TFT_GREEN, FONT1);
+    if (clear || menuItemStart != m_menuItemStartOld) {
+        Clear(false);
+        UpdateStatus(txtStatus_settings, true, WmcTft::color_green);
 
-    drawTextMultiline(txtMenu_transmit, txtMenu_delSettings, 20, 0, 150, TL_DATUM, TFT_GREEN, FONT1, false);
+        uint8_t menuItemMax = (uint8_t)WmcTft::lcdTextMenuStringIndex::maxMenuItemCount;
+        uint8_t renderItemsMax = menuItemMax > 10 ? 10 : menuItemMax;
+        for (uint8_t i = menuItemStart; i < renderItemsMax + menuItemStart; i++){
+            tft.fillRect(0, posTop + ((i-menuItemStart) * itemHeight), TFT_WIDTH, itemHeight, ((i == menuSelected) ? TFT_DARKGREY : TFT_BLACK));
+            drawText(lcdTextMenuStrings[i], 5, posTop + ((i - menuItemStart) * itemHeight) + 3, TL_DATUM, TFT_GREEN, FONT1);
+        }
+
+    } else {
+        uint8_t posTop2 = posTop + (menuSelected - menuItemStart) * itemHeight;
+        tft.fillRect(0, posTop2, TFT_WIDTH, itemHeight, TFT_DARKGREY);
+        drawText(lcdTextMenuStrings[menuSelected], 5, posTop2 + 3, TL_DATUM, TFT_GREEN, FONT1);
+
+        posTop2 = posTop + (menuSelectedOld - menuItemStart) * itemHeight;
+        tft.fillRect(0, posTop2, TFT_WIDTH, itemHeight, TFT_BLACK);
+        drawText(lcdTextMenuStrings[menuSelectedOld], 5, posTop2 + 3, TL_DATUM, TFT_GREEN, FONT1);
+    }
 }
+
+/***********************************************************************************************************************
+ * Show info screen
+*/
+void WmcTft::ShowInfo(String& localIP, String& subnetMask, String& gatewayIP, String& dnsIP, String& centralIp, String& ssid)
+{
+    Clear(true);
+    UpdateStatus("Info", false, WmcTft::color_green);
+
+    drawText("IP address:"     ,   0, 30,  TL_DATUM, TFT_GREEN, FONT1);
+    drawText(localIP.c_str()   , 100, 30,  TL_DATUM, TFT_GREEN, FONT1);
+
+    drawText("IP Gateway:"     ,   0, 55,  TL_DATUM, TFT_GREEN, FONT1);
+    drawText(gatewayIP.c_str() , 100, 55,  TL_DATUM, TFT_GREEN, FONT1);
+
+    drawText("DNS:"            ,   0, 80,  TL_DATUM, TFT_GREEN, FONT1);
+    drawText(dnsIP.c_str()     , 100, 80,  TL_DATUM, TFT_GREEN, FONT1);
+
+    drawText("Subnet:"         ,   0, 105, TL_DATUM, TFT_GREEN, FONT1);
+    drawText(subnetMask.c_str(), 100, 105, TL_DATUM, TFT_GREEN, FONT1);
+
+    drawText("SSID:"           ,   0, 130, TL_DATUM, TFT_GREEN, FONT1);
+    drawText(ssid.c_str()      , 100, 130, TL_DATUM, TFT_GREEN, FONT1);
+
+    drawText("IP Central:"     ,   0, 155, TL_DATUM, TFT_GREEN, FONT1);
+    drawText(centralIp.c_str(), 100, 155, TL_DATUM, TFT_GREEN, FONT1);
+}
+
 
 /***********************************************************************************************************************
  * ToDo

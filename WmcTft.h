@@ -108,22 +108,6 @@
         "deleted. Continue?",
         "OK (9)  -  Cancel (0)",
 
-        "1  Add Loc",
-        "2  Change Loc",
-        "3  Delete Loc",
-        "4  CV Programming",
-        "5  POM Programming",
-        "6  STOP",
-        "6  Emergency STOP",
-        "7  Transmit",
-        "8  Delete Locs",
-        #if APP_CFG_UC == APP_CFG_UC_STM32
-            "9  Delete WiFi Settings",
-        #else
-            "9  XPNET",
-        #endif
-        "0  Delete ALL",
-
         "Erasing WiFi settings ...",
         "Erasing all locomotives ...",
         "Erasing all settings ...",
@@ -144,11 +128,37 @@
         "Connect Failed",
         "Receive Failed",
         "End Failed",
-};
+    };
+
+    PGM_P const lcdTextMenuStrings[] PROGMEM = {
+        "Information",
+        "Add Loc",
+        "Change Loc",
+        "Delete Loc",
+        "CV Programming",
+        "POM Programming",
+        "STOP Mode",
+        "Transmit",
+        "Delete Locs",
+        #if APP_CFG_UC == APP_CFG_UC_STM32
+            "Delete WiFi Settings",
+        #else
+            "XPNET",
+        #endif
+        "Delete ALL",
+        "Screen brightness",
+        "menu 12",
+        "menu 13",
+        "menu 14",
+        "menu 15",
+    };
 #else
     // ToDo: German translation
     PGM_P const lcdTextStrings[] PROGMEM = {
     }
+
+    PGM_P const lcdTextMenuStrings[] PROGMEM = {
+    };
 #endif
 
 /***********************************************************************************************************************
@@ -200,18 +210,6 @@ public:
         txtConfirmation_line3,
         txtConfirmation_line4,
 
-        txtMenu_addLoc,
-        txtMenu_changeLoc,
-        txtMenu_deleteLoc,
-        txtMenu_cvPgm,
-        txtMenu_pomPgm,
-        txtMenu_stop,
-        txtMenu_stopEmergency,
-        txtMenu_transmit,
-        txtMenu_delAllLocs,
-        txtMenu_delWifi_XpNet,
-        txtMenu_delSettings,
-
         txtEraseing_wifi,
         txtEraseing_locs,
         txtEraseing_settings,
@@ -232,6 +230,28 @@ public:
         txtOtaUpdate_Error2,
         txtOtaUpdate_Error3,
         txtOtaUpdate_Error4,
+    };
+
+    enum lcdTextMenuStringIndex
+    {
+        txtMenu_info,
+        txtMenu_addLoc,
+        txtMenu_changeLoc,
+        txtMenu_deleteLoc,
+        txtMenu_cvPgm,
+        txtMenu_pomPgm,
+        txtMenu_stop_mode,
+        txtMenu_transmit,
+        txtMenu_delAllLocs,
+        txtMenu_delWifi_XpNet,
+        txtMenu_delSettings,
+        txtMenu_screenBrightness,
+        txtMenu_12,
+        txtMenu_13,
+        txtMenu_14,
+        txtMenu_15,
+
+        maxMenuItemCount,       // this must the last element in this enum
     };
 
     /**
@@ -374,7 +394,9 @@ public:
     /**
      * Display first menu.
      */
-    void ShowMenu(bool emergencyStop);
+    void ShowMenu(bool emergencyStop, uint8_t menuSelected, uint8_t menuSelectedOld, uint8_t menuItemStart, uint8_t m_menuItemStartOld, uint8_t clear);
+
+    void ShowInfo(String& localIP, String& subnetMask, String& gatewayIP, String& dnsIP, String& centralIp, String& ssid);
 
     /**
      * Display erase.
@@ -490,6 +512,11 @@ private:
      * Convert color enum to display value.
      */
     uint16_t getColor(color Clr);
+
+    uint8_t menuItemStart;
+    uint8_t menuItemStartOld;
+    uint8_t menuSelected;
+    uint8_t menuSelectedOld;
 };
 
 #endif
