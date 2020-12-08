@@ -13,31 +13,19 @@
  **********************************************************************************************************************/
 #include <Arduino.h>
 #include <TFT_eSPI.h>
-#include <User_Setup.h>
+#include <User_Setup_Select.h>
 
-#ifdef LOAD_GFXFF
 // Fonts
-#define MONO9     &FreeMono9pt7b
-#define MONO12    &FreeMono12pt7b
-#define MONO18    &FreeMono18pt7b
-#define MONO24    &FreeMono24pt7b
+//#define MONO9     &FreeMono9pt7b        // FONT0
+#define SANS9     &FreeSans9pt7b          // FONT1
+#define SANS12    &FreeSans12pt7b         // FONT2
+#define SANS18    &FreeSans18pt7b         // FONT3
+#define SANS24    &FreeSans24pt7b         // FONT4
 
-#define MONO9_B   &FreeMonoBold9pt7b
-#define MONO12_B  &FreeMonoBold12pt7b
-#define MONO18_B  &FreeMonoBold18pt7b
-#define MONO24_B  &FreeMonoBold24pt7b
-
-#define SANS9C    &Open_Sans_Condensed_Light_9Bitmaps
-#define SANS9     &FreeSans9pt7b
-#define SANS12    &FreeSans12pt7b
-#define SANS18    &FreeSans18pt7b
-#define SANS24    &FreeSans24pt7b
-
-#define SANS9_B   &FreeSansBold9pt7b
-#define SANS12_B  &FreeSansBold12pt7b
-#define SANS18_B  &FreeSansBold18pt7b
-#define SANS24_B  &FreeSansBold24pt7b
-#endif
+//#define SANS9_B   &FreeSansBold9pt7b      // FONT1_B
+#define SANS12_B  &FreeSansBold12pt7b       // FONT2_B
+//#define SANS18_B  &FreeSansBold18pt7b       // FONT3_B
+//#define SANS24_B  &FreeSansBold24pt7b       // FONT4_B
 
 #define FUNCTION_BUTTON_SIZE  25
 #define STATUSBAR_HEIGHT      25
@@ -78,12 +66,16 @@
         "MANUAL",
         "CONTROL II",
 
-        "WiFi Config Mode",
-        "is active.",
-        "Please connect",
-        "to WiFi SSID:",
+        #if APP_CFG_UC == APP_CFG_UC_ESP8266
+            "WiFi Config Mode",
+            "is active.",
+            "Please connect",
+            "to WiFi SSID:",
 
-        "Connecting to WLAN",
+            "Connecting to WLAN",
+        #else
+            "Setup XpressNet address",
+        #endif
         "Connecting to Central",
         "Receiving",
         "Sorting",
@@ -116,18 +108,23 @@
         "power off and on",
         "to continue",
 
+        "Reset is performed.",
+        "Please wait!",
+
         "Power off",
         "Please release key!",
 
-        "Firmware update",
-        "Progress:",
-        "Waiting for completion ...",
-        "Error: ",
-        "Auth Failed",
-        "Begin Failed",
-        "Connect Failed",
-        "Receive Failed",
-        "End Failed",
+        #if APP_CFG_UC == APP_CFG_UC_ESP8266
+            "Firmware update",
+            "Progress:",
+            "Waiting for completion ...",
+            "Error: ",
+            "Auth Failed",
+            "Begin Failed",
+            "Connect Failed",
+            "Receive Failed",
+            "End Failed",
+        #endif
     };
 
     PGM_P const lcdTextMenuStrings[] PROGMEM = {
@@ -180,12 +177,17 @@ public:
         txtAppName_Line2,
         txtAppName_Line3,
 
-        txtWifi_configModeLine1,
-        txtWifi_configModeLine2,
-        txtWifi_configModeLine3,
-        txtWifi_configModeLine4,
+        #if APP_CFG_UC == APP_CFG_UC_ESP8266
+            txtWifi_configModeLine1,
+            txtWifi_configModeLine2,
+            txtWifi_configModeLine3,
+            txtWifi_configModeLine4,
 
-        txtStatus_wifiConnect,
+            txtStatus_wifiConnect,
+        #else
+            txtStatus_setupXpressNetAddress,
+        #endif
+
         txtStatus_z21Connect,
         txtStatus_receiving,
         txtStatus_sorting,
@@ -214,22 +216,27 @@ public:
         txtEraseing_locs,
         txtEraseing_settings,
 
-        txtComandline_line1,
-        txtComandline_line2,
-        txtComandline_line3,
+        txtAskForReset_line1,
+        txtAskForReset_line2,
+        txtAskForReset_line3,
+
+        txtShowReset_line1,
+        txtShowReset_line2,
 
         txtPowerOff_line1,
         txtPowerOff_line2,
 
-        txtOtaUpdate_line1,
-        txtOtaUpdate_line2,
-        txtOtaUpdate_line3,
-        txtOtaUpdate_Error,
-        txtOtaUpdate_Error0,
-        txtOtaUpdate_Error1,
-        txtOtaUpdate_Error2,
-        txtOtaUpdate_Error3,
-        txtOtaUpdate_Error4,
+        #if APP_CFG_UC == APP_CFG_UC_ESP8266
+            txtOtaUpdate_line1,
+            txtOtaUpdate_line2,
+            txtOtaUpdate_line3,
+            txtOtaUpdate_Error,
+            txtOtaUpdate_Error0,
+            txtOtaUpdate_Error1,
+            txtOtaUpdate_Error2,
+            txtOtaUpdate_Error3,
+            txtOtaUpdate_Error4,
+        #endif
     };
 
     enum lcdTextMenuStringIndex
@@ -243,7 +250,9 @@ public:
         txtMenu_stop_mode,
         txtMenu_transmit,
         txtMenu_delAllLocs,
-        txtMenu_delWifi_XpNet,
+        #if APP_CFG_UC == APP_CFG_UC_ESP8266
+            txtMenu_delWifi_XpNet,
+        #endif
         txtMenu_delSettings,
         txtMenu_screenBrightness,
         txtMenu_12,
@@ -346,7 +355,7 @@ public:
     void UpdateStatusBattery(String txt);
 
     void drawStatusDisabled(uint8_t left);
-    void UpdateStatusWifi(sint8 rssiPercent);
+    void UpdateStatusWifi(uint8 rssiPercent);
     void UpdateStatusZ21(uint8_t state);
     void UpdateStatusPower(uint8_t state);
     /**
@@ -446,7 +455,7 @@ public:
     /**
      * Show screen to uodate XpNet address.
      */
-    void ShowXpNetAddress(uint16_t Address);
+    void ShowXpNetAddress(uint8_t Address);
 
     /**
      * Screen for adding functions.
@@ -474,9 +483,14 @@ public:
     void UpdateFunction(uint8_t Index, uint8_t Function);
 
     /**
-     * Show command line screen.
+     * Show screen to request a reset or a power cycle
      */
-    void CommandLine(void);
+    void AskForReset(void);
+
+    /**
+     * Show reset message
+     */
+    void ShowResetMessage();
 
     /**
      * Show address of loc for POM mode.
